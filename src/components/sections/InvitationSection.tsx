@@ -10,77 +10,23 @@ interface InvitationSectionProps {
 
 const InvitationSection = ({ bgColor = 'white' }: InvitationSectionProps) => {
   const { invitation } = weddingConfig;
-  
-  const hasGroomFather = Boolean(invitation.groom.father && invitation.groom.father.trim() !== '');
-  const hasGroomMother = Boolean(invitation.groom.mother && invitation.groom.mother.trim() !== '');
-  const hasGroomParents = hasGroomFather || hasGroomMother;
-  
-  const hasBrideFather = Boolean(invitation.bride.father && invitation.bride.father.trim() !== '');
-  const hasBrideMother = Boolean(invitation.bride.mother && invitation.bride.mother.trim() !== '');
-  const hasBrideParents = hasBrideFather || hasBrideMother;
-  
-  const getParentsText = (
-    father: string, 
-    mother: string, 
-    hasFather: boolean, 
-    hasMother: boolean
-  ): string => {
-    if (hasFather && hasMother) {
-      return `${father} · ${mother}`;
-    } else if (hasFather) {
-      return father;
-    } else if (hasMother) {
-      return mother;
-    }
-    return "";
-  };
-  
-  const groomParentsText = getParentsText(
-    invitation.groom.father || '',
-    invitation.groom.mother || '',
-    hasGroomFather,
-    hasGroomMother
-  );
-  
-  const brideParentsText = getParentsText(
-    invitation.bride.father || '',
-    invitation.bride.mother || '',
-    hasBrideFather,
-    hasBrideMother
-  );
-  
+
   return (
     <InvitationSectionContainer $bgColor={bgColor}>
-      <InvitationMessage>
-        {invitation.message}
-      </InvitationMessage>
-      
+      <InvitationMessage>{invitation.message}</InvitationMessage>
+
       <CoupleContainer>
         <CoupleInfo>
-          {hasGroomParents ? (
-            <ParentsNames>
-              {groomParentsText}
-              <ParentLabel>{"'s"} {invitation.groom.label || "son"}</ParentLabel>
-            </ParentsNames>
-          ) : (
-            <ParentsNames>
-              <ParentLabel>Groom</ParentLabel>
-            </ParentsNames>
-          )}
+          <ParentsNames>
+            <ParentLabel>Groom</ParentLabel>
+          </ParentsNames>
           <CoupleName>{invitation.groom.name}</CoupleName>
         </CoupleInfo>
-        
+
         <CoupleInfo>
-          {hasBrideParents ? (
-            <ParentsNames>
-              {brideParentsText}
-              <ParentLabel>{"'s"} {invitation.bride.label || "daughter"}</ParentLabel>
-            </ParentsNames>
-          ) : (
-            <ParentsNames>
-              <ParentLabel>Bride</ParentLabel>
-            </ParentsNames>
-          )}
+          <ParentsNames>
+            <ParentLabel>Bride</ParentLabel>
+          </ParentsNames>
           <CoupleName>{invitation.bride.name}</CoupleName>
         </CoupleInfo>
       </CoupleContainer>
@@ -88,10 +34,13 @@ const InvitationSection = ({ bgColor = 'white' }: InvitationSectionProps) => {
   );
 };
 
-const InvitationSectionContainer = styled.section<{ $bgColor: 'white' | 'beige' }>`
+const InvitationSectionContainer = styled.section<{
+  $bgColor: 'white' | 'beige';
+}>`
   padding: 4rem 1.5rem;
   text-align: center;
-  background-color: ${props => props.$bgColor === 'beige' ? '#F8F6F2' : 'white'};
+  background-color: ${(props) =>
+    props.$bgColor === 'beige' ? '#F8F6F2' : 'white'};
 `;
 
 const InvitationMessage = styled.p`
@@ -100,7 +49,7 @@ const InvitationMessage = styled.p`
   max-width: 36rem;
   margin: 0 auto 2rem auto;
   font-size: 1rem;
-  
+
   @media (min-width: 768px) {
     font-size: 1.125rem;
   }
@@ -111,7 +60,7 @@ const CoupleContainer = styled.div`
   justify-content: center;
   gap: 2rem;
   flex-wrap: wrap;
-  
+
   @media (min-width: 768px) {
     gap: 4rem;
   }
@@ -135,4 +84,4 @@ const CoupleName = styled.p`
   font-weight: 500;
 `;
 
-export default InvitationSection; 
+export default InvitationSection;
