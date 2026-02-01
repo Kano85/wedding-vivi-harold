@@ -24,8 +24,8 @@ export const weddingConfig = {
   main: {
     title: 'Wedding Invitation',
     image: '/images/image11.jpg',
-    date: '2026년 5월 16일 토요일 12시 30분',
-    venue: '웨딩홀 이름',
+    date: 'Saturday, June 6, 2026',
+    venue: 'La Farinera de\nSant Lluis',
   },
 
   // 소개글
@@ -102,7 +102,7 @@ export const weddingConfig = {
   // 초대의 말씀
   invitation: {
     message:
-      '한 줄기 별빛이 되어 만난 인연\n평생을 함께 걸어가려 합니다.\n\n소중한 분들의 축복 속에\n저희 두 사람이 첫 걸음을 내딛습니다.\n\n귀한 시간 내어 함께해 주신다면\n그 어떤 축복보다 값진 선물이 될 것입니다.',
+      'We’re getting married on the Costa Brava, We can’t wait to celebrate with our favorite people from different places, enjoy good vibes, and make great memories together. Your presence will mean everything to us',
     groom: {
       name: '신랑이름',
       label: '아들',
