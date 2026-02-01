@@ -6,14 +6,14 @@ export async function POST(request: Request) {
     const data = await request.json();
     const { name, side, isAttending, guestCount, hasMeal, timestamp } = data;
     
-    // 슬랙 메시지를 더 간결하게 구성
+    // Build a compact Slack message
     const slackMessage: any = {
       blocks: [
         {
           type: "header",
           text: {
             type: "plain_text",
-            text: "💌 새로운 참석 여부 응답",
+            text: "💌 New RSVP Response",
             emoji: true
           }
         },
@@ -23,35 +23,35 @@ export async function POST(request: Request) {
       ]
     };
 
-    // 기본 정보를 한 블록에 표시
+    // Base information in one block
     slackMessage.blocks.push({
       type: "section",
       fields: [
         {
           type: "mrkdwn",
-          text: `*이름:* ${name} (${side || '미지정'})`
+          text: `*Name:* ${name} (${side || 'Unspecified'})`
         },
         {
           type: "mrkdwn",
-          text: `*참석 여부:* ${isAttending ? '✅ 참석' : '❌ 불참'}`
+          text: `*Attendance:* ${isAttending ? '✅ Attending' : '❌ Not attending'}`
         }
       ]
     });
     
-    // 참석하는 경우만 인원 정보와 식사 여부 추가 (한 블록에 함께 표시)
+    // Add guest/meal details only when attending
     if (isAttending) {
       const additionalFields = [
         {
           type: "mrkdwn",
-          text: `*참석 인원:* ${guestCount}명`
+          text: `*Guest count:* ${guestCount}`
         }
       ];
       
-      // 식사 여부 옵션이 활성화된 경우에만 표시
+      // Only include meal option when enabled
       if (weddingConfig.rsvp.showMealOption) {
         additionalFields.push({
           type: "mrkdwn",
-          text: `*식사 여부:* ${hasMeal ? '✅ 식사 함' : '❌ 식사 안 함'}`
+          text: `*Meal:* ${hasMeal ? '✅ Having a meal' : '❌ No meal'}`
         });
       }
       
@@ -61,9 +61,9 @@ export async function POST(request: Request) {
       });
     }
     
-    // 접수 시간을 직접 한국 시간으로 포맷팅
+    // Format submission time in KST
     const koreanTime = timestamp ? new Date(timestamp) : new Date();
-    const koreanTimeString = koreanTime.toLocaleString('ko-KR', { 
+    const koreanTimeString = koreanTime.toLocaleString('en-US', { 
       timeZone: 'Asia/Seoul',
       year: 'numeric', 
       month: '2-digit', 
@@ -73,18 +73,18 @@ export async function POST(request: Request) {
       hour12: false
     });
     
-    // 날짜 정보 추가
+    // Add timestamp info
     slackMessage.blocks.push({
       type: "context",
       elements: [
         {
           type: "mrkdwn",
-          text: `접수 시간: ${koreanTimeString} (KST)`
+          text: `Submitted at: ${koreanTimeString} (KST)`
         }
       ]
     });
     
-    // 웹훅 URL이 제공된 경우에만 Slack으로 메시지 전송
+    // Send to Slack only when a webhook URL is provided
     if (weddingConfig.slack.webhookUrl) {
       try {
         const slackResponse = await fetch(weddingConfig.slack.webhookUrl, {
@@ -96,23 +96,23 @@ export async function POST(request: Request) {
         });
         
         if (!slackResponse.ok) {
-          console.error(`Slack API 오류: ${slackResponse.statusText}`);
+          console.error(`Slack API error: ${slackResponse.statusText}`);
         }
       } catch (error) {
-        console.error('Slack 전송 오류:', error);
-        // Slack 전송이 실패하더라도 클라이언트에게는 성공 응답 반환
+        console.error('Slack send error:', error);
+        // Return success to the client even if Slack send fails
       }
     } else {
-      console.log('Slack 웹훅 URL이 설정되지 않았습니다.');
-      console.log('RSVP 데이터:', data);
+      console.log('Slack webhook URL is not configured.');
+      console.log('RSVP data:', data);
     }
     
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('RSVP 처리 오류:', error);
+    console.error('RSVP processing error:', error);
     return NextResponse.json({ 
       success: false,
-      message: 'RSVP 처리 중 오류가 발생했습니다.' 
+      message: 'An error occurred while processing the RSVP.' 
     }, { status: 500 });
   }
 } 

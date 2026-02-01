@@ -5,24 +5,24 @@ import { weddingConfig } from '../../../src/config/wedding-config';
 
 export async function GET() {
   try {
-    // 갤러리 폴더 경로
+    // Gallery folder path
     const galleryDir = path.join(process.cwd(), 'public/images/gallery');
     
-    // 폴더 내 파일 목록 읽기
+    // Read files in the folder
     const files = fs.readdirSync(galleryDir);
     
-    // 이미지 파일 필터링
+    // Filter image files
     const imageFiles = files
       .filter(file => {
         const ext = path.extname(file).toLowerCase();
         return ['.jpg', '.jpeg', '.png', '.gif', '.webp'].includes(ext);
       });
     
-    // config 파일에 설정된 순서로 이미지 정렬
+    // Order images based on config
     const configImages = weddingConfig.gallery.images;
     const orderedImages: string[] = [];
     
-    // config에 설정된 순서대로 존재하는 이미지만 추가
+    // Only add files that exist, following config order
     for (const configImagePath of configImages) {
       const filename = path.basename(configImagePath);
       if (imageFiles.includes(filename)) {
@@ -30,7 +30,7 @@ export async function GET() {
       }
     }
     
-    // config에 없지만 폴더에 존재하는 이미지들을 마지막에 추가 (파일명 순으로 정렬)
+    // Append images not in config (sorted by filename)
     const remainingFiles = imageFiles
       .filter(file => !configImages.some((configPath: string) => path.basename(configPath) === file))
       .sort((a, b) => a.localeCompare(b))
@@ -40,11 +40,11 @@ export async function GET() {
     
     return NextResponse.json({ images: finalImages });
   } catch (error) {
-    console.error('갤러리 이미지 로드 오류:', error);
+    console.error('Gallery image load error:', error);
     return NextResponse.json(
       { 
-        error: '갤러리 이미지를 불러오는 중 오류가 발생했습니다.',
-        images: weddingConfig.gallery.images // 에러 시 config 설정 반환
+        error: 'An error occurred while loading gallery images.',
+        images: weddingConfig.gallery.images // Return config list on error
       }, 
       { status: 500 }
     );

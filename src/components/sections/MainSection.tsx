@@ -15,7 +15,7 @@ const MainSection = () => {
       {}
       <BackgroundImage
         src={weddingConfig.main.image}
-        alt="웨딩 배경 이미지"
+        alt="Wedding background image"
         fill
         priority
         sizes="100vw"
@@ -58,8 +58,8 @@ const MainSectionContainer = styled.section`
     max-width: calc(100vh * 9 / 16);
     width: auto;
     margin: 0 auto;
-    border-radius: 24px; /* 선택사항: 모서리 둥글게 */
-    box-shadow: 0 0 32px rgba(0, 0, 0, 0.08); /* 선택사항: 그림자 */
+    border-radius: 24px; /* Optional: rounded corners */
+    box-shadow: 0 0 32px rgba(0, 0, 0, 0.08); /* Optional: shadow */
   }
 `;
 
@@ -102,7 +102,7 @@ const MainTitle = styled.h1`
   font-weight: 400;
   line-height: 1.2;
 
-  /* 기본 크기에서 세로 길이가 짧을 때 */
+  /* Shorter viewport height at default size */
   @media (min-width: 769px) and (max-height: 700px) {
     letter-spacing: 1.5px;
     margin-bottom: 0.8rem;
@@ -117,7 +117,7 @@ const MainTitle = styled.h1`
     min-height: 2.5rem;
   }
 
-  /* 768px 이하에서 세로 길이가 짧을 때 */
+  /* Shorter viewport height at <= 768px */
   @media (max-width: 768px) and (max-height: 650px) {
     letter-spacing: 1px;
     margin-bottom: 0.8rem;
@@ -133,7 +133,7 @@ const MainTitle = styled.h1`
     letter-spacing: 1.5px;
   }
 
-  /* 450px 이하에서 세로 길이가 짧을 때 */
+  /* Shorter viewport height at <= 450px */
   @media (max-width: 450px) and (max-height: 600px) {
     letter-spacing: 1px;
     margin-bottom: 0.8rem;
@@ -149,7 +149,7 @@ const MainTitle = styled.h1`
     letter-spacing: 1px;
   }
 
-  /* 360px 이하에서 세로 길이가 짧을 때 */
+  /* Shorter viewport height at <= 360px */
   @media (max-width: 360px) and (max-height: 550px) {
     letter-spacing: 0.5px;
     margin-bottom: 0.8rem;
@@ -165,7 +165,7 @@ const MainTitle = styled.h1`
     letter-spacing: 0.5px;
   }
 
-  /* 295px 이하에서 세로 길이가 짧을 때 */
+  /* Shorter viewport height at <= 295px */
   @media (max-width: 295px) and (max-height: 500px) {
     letter-spacing: 0.2px;
     margin-bottom: 0.8rem;
@@ -180,7 +180,7 @@ const DateText = styled.p`
   font-size: 1.25rem;
   margin-bottom: 0.5rem;
 
-  /* 기본 크기에서 세로 길이가 짧을 때 */
+  /* Shorter viewport height at default size */
   @media (min-width: 769px) and (max-height: 700px) {
     margin-bottom: 0.4rem;
   }
@@ -193,7 +193,7 @@ const DateText = styled.p`
     min-height: 0.3rem;
   }
 
-  /* 768px 이하에서 세로 길이가 짧을 때 */
+  /* Shorter viewport height at <= 768px */
   @media (max-width: 768px) and (max-height: 650px) {
     margin-bottom: 0.4rem;
   }
@@ -206,7 +206,7 @@ const DateText = styled.p`
     margin-bottom: 0.15rem;
   }
 
-  /* 450px 이하에서 세로 길이가 짧을 때 */
+  /* Shorter viewport height at <= 450px */
   @media (max-width: 450px) and (max-height: 600px) {
     margin-bottom: 0.1rem;
   }
@@ -219,7 +219,7 @@ const DateText = styled.p`
     margin-bottom: 0.1rem;
   }
 
-  /* 360px 이하에서 세로 길이가 짧을 때 */
+  /* Shorter viewport height at <= 360px */
   @media (max-width: 360px) and (max-height: 550px) {
     margin-bottom: 0.05rem;
   }
@@ -232,7 +232,7 @@ const DateText = styled.p`
     margin-bottom: 0.05rem;
   }
 
-  /* 295px 이하에서 세로 길이가 짧을 때 */
+  /* Shorter viewport height at <= 295px */
   @media (max-width: 295px) and (max-height: 500px) {
     margin-bottom: 0.02rem;
   }

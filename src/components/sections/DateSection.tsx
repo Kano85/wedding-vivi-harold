@@ -15,52 +15,50 @@ const DateSection = ({ bgColor = 'white' }: DateSectionProps) => {
     minutes: 0,
     seconds: 0,
   });
-  
+
   const [isWeddingPassed, setIsWeddingPassed] = useState(false);
-  
-  // 달력 생성 로직
+
+  // Calendar generation logic
   const generateCalendar = () => {
     const { year, month, day } = weddingConfig.date;
-    
-    // 해당 월의 첫째 날과 마지막 날 계산
+
+    // Calculate first/last day of the month
     const firstDay = new Date(year, month - 1, 1);
     const lastDay = new Date(year, month, 0);
-    const startDayOfWeek = firstDay.getDay(); // 0 = 일요일, 1 = 월요일, ...
+    const startDayOfWeek = firstDay.getDay(); // 0 = Sunday, 1 = Monday, ...
     const daysInMonth = lastDay.getDate();
-    
+
     const calendarDays = [];
-    
-    // 첫 주의 빈 칸들 추가
+
+    // Add leading empty slots
     for (let i = 0; i < startDayOfWeek; i++) {
       calendarDays.push(<div key={`empty-${i}`}></div>);
     }
-    
-    // 실제 날짜들 추가
+
+    // Add actual days
     for (let date = 1; date <= daysInMonth; date++) {
       const currentDate = new Date(year, month - 1, date);
       const dayOfWeek = currentDate.getDay();
       const isWeddingDay = date === day;
-      
+
       let weekendType: string | undefined;
       if (dayOfWeek === 0) weekendType = 'sun';
       else if (dayOfWeek === 6) weekendType = 'sat';
-      
+
       if (isWeddingDay) {
-        calendarDays.push(
-          <WeddingDay key={date}>{date}</WeddingDay>
-        );
+        calendarDays.push(<WeddingDay key={date}>{date}</WeddingDay>);
       } else {
         calendarDays.push(
           <Day key={date} $isWeekend={weekendType}>
             {date}
-          </Day>
+          </Day>,
         );
       }
     }
-    
+
     return calendarDays;
   };
-  
+
   useEffect(() => {
     const calculateTimeLeft = () => {
       const weddingDate = new Date(
@@ -68,95 +66,116 @@ const DateSection = ({ bgColor = 'white' }: DateSectionProps) => {
         weddingConfig.date.month - 1,
         weddingConfig.date.day,
         weddingConfig.date.hour,
-        weddingConfig.date.minute
+        weddingConfig.date.minute,
       );
-      
+
       const now = new Date();
       const difference = weddingDate.getTime() - now.getTime();
-      
+
       if (difference > 0) {
         const days = Math.floor(difference / (1000 * 60 * 60 * 24));
         const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
         const minutes = Math.floor((difference / 1000 / 60) % 60);
         const seconds = Math.floor((difference / 1000) % 60);
-        
+
         setTimeLeft({ days, hours, minutes, seconds });
         setIsWeddingPassed(false);
       } else {
-        // 결혼식이 지났음
+        // Wedding date has passed
         setIsWeddingPassed(true);
       }
     };
-    
+
     calculateTimeLeft();
     const timer = setInterval(calculateTimeLeft, 1000);
-    
+
     return () => clearInterval(timer);
   }, []);
 
   return (
     <DateSectionContainer $bgColor={bgColor}>
-      <SectionTitle>일정</SectionTitle>
-      
+      <SectionTitle>Event Date</SectionTitle>
+
       <CalendarCard>
         <CalendarHeader>
-          <span>{weddingConfig.date.year}년 {weddingConfig.date.month}월</span>
+          <span>
+            {[
+              'January',
+              'February',
+              'March',
+              'April',
+              'May',
+              'June',
+              'July',
+              'August',
+              'September',
+              'October',
+              'November',
+              'December',
+            ][weddingConfig.date.month - 1]} {weddingConfig.date.year}
+          </span>
           <div>
-            <button aria-label="이전 달"><i className="fas fa-chevron-left"></i></button>
-            <button aria-label="다음 달"><i className="fas fa-chevron-right"></i></button>
+            <button aria-label="Previous month">
+              <i className="fas fa-chevron-left"></i>
+            </button>
+            <button aria-label="Next month">
+              <i className="fas fa-chevron-right"></i>
+            </button>
           </div>
         </CalendarHeader>
-        
+
         <CalendarGrid>
-          <DayName $isWeekend="sun">일</DayName>
-          <DayName>월</DayName>
-          <DayName>화</DayName>
-          <DayName>수</DayName>
-          <DayName>목</DayName>
-          <DayName>금</DayName>
-          <DayName $isWeekend="sat">토</DayName>
-          
+          <DayName $isWeekend="sun">Sun</DayName>
+          <DayName>Mon</DayName>
+          <DayName>Tue</DayName>
+          <DayName>Wed</DayName>
+          <DayName>Thu</DayName>
+          <DayName>Fri</DayName>
+          <DayName $isWeekend="sat">Sat</DayName>
+
           {generateCalendar()}
         </CalendarGrid>
       </CalendarCard>
-      
+
       {!isWeddingPassed && (
         <CountdownContainer>
-          <CountdownTitle>결혼까지 남은 시간</CountdownTitle>
-          
+          <CountdownTitle>Time until the wedding</CountdownTitle>
+
           <CountdownWrapper>
             <CountdownItem>
               <CountdownValue>{timeLeft.days}</CountdownValue>
-              <CountdownLabel>일</CountdownLabel>
+              <CountdownLabel>Days</CountdownLabel>
             </CountdownItem>
             <VerticalDivider />
             <CountdownItem>
               <CountdownValue>
                 {timeLeft.hours < 10 ? `0${timeLeft.hours}` : timeLeft.hours}
               </CountdownValue>
-              <CountdownLabel>시간</CountdownLabel>
+              <CountdownLabel>Hours</CountdownLabel>
             </CountdownItem>
             <VerticalDivider />
             <CountdownItem>
               <CountdownValue>
-                {timeLeft.minutes < 10 ? `0${timeLeft.minutes}` : timeLeft.minutes}
+                {timeLeft.minutes < 10
+                  ? `0${timeLeft.minutes}`
+                  : timeLeft.minutes}
               </CountdownValue>
-              <CountdownLabel>분</CountdownLabel>
+              <CountdownLabel>Minutes</CountdownLabel>
             </CountdownItem>
             <VerticalDivider />
             <CountdownItem>
               <CountdownValue>
-                {timeLeft.seconds < 10 ? `0${timeLeft.seconds}` : timeLeft.seconds}
+                {timeLeft.seconds < 10
+                  ? `0${timeLeft.seconds}`
+                  : timeLeft.seconds}
               </CountdownValue>
-              <CountdownLabel>초</CountdownLabel>
+              <CountdownLabel>Seconds</CountdownLabel>
             </CountdownItem>
           </CountdownWrapper>
         </CountdownContainer>
       )}
-      
-      <WeddingDate>
-        {weddingConfig.main.date}
-      </WeddingDate>
+
+      <WeddingDate>{weddingConfig.main.date}</WeddingDate>
     </DateSectionContainer>
   );
 };
@@ -164,7 +183,8 @@ const DateSection = ({ bgColor = 'white' }: DateSectionProps) => {
 const DateSectionContainer = styled.section<{ $bgColor: 'white' | 'beige' }>`
   padding: 4rem 1.5rem;
   text-align: center;
-  background-color: ${props => props.$bgColor === 'beige' ? '#F8F6F2' : 'white'};
+  background-color: ${(props) =>
+    props.$bgColor === 'beige' ? '#F8F6F2' : 'white'};
 `;
 
 const SectionTitle = styled.h2`
@@ -173,7 +193,7 @@ const SectionTitle = styled.h2`
   margin-bottom: 2rem;
   font-weight: 500;
   font-size: 1.5rem;
-  
+
   &::after {
     content: '';
     position: absolute;
@@ -190,7 +210,7 @@ const SectionTitle = styled.h2`
 const CalendarCard = styled.div`
   background-color: white;
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   padding: 1.5rem;
   margin-bottom: 2rem;
   max-width: 36rem;
@@ -203,14 +223,14 @@ const CalendarHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
-  
+
   button {
     border: none;
     background: none;
     color: #999;
     cursor: pointer;
     padding: 0.5rem;
-    
+
     &:hover {
       color: #333;
     }
@@ -225,21 +245,23 @@ const CalendarGrid = styled.div`
 `;
 
 const DayName = styled.div<{ $isWeekend?: string }>`
-  color: ${props => 
-    props.$isWeekend === 'sun' ? '#e57373' : 
-    props.$isWeekend === 'sat' ? '#64b5f6' : 
-    'inherit'
-  };
+  color: ${(props) =>
+    props.$isWeekend === 'sun'
+      ? '#e57373'
+      : props.$isWeekend === 'sat'
+        ? '#64b5f6'
+        : 'inherit'};
   font-size: 0.875rem;
   margin-bottom: 0.5rem;
 `;
 
 const Day = styled.div<{ $isWeekend?: string }>`
-  color: ${props => 
-    props.$isWeekend === 'sun' ? '#e57373' : 
-    props.$isWeekend === 'sat' ? '#64b5f6' : 
-    'inherit'
-  };
+  color: ${(props) =>
+    props.$isWeekend === 'sun'
+      ? '#e57373'
+      : props.$isWeekend === 'sat'
+        ? '#64b5f6'
+        : 'inherit'};
   padding: 0.5rem 0;
   font-size: 0.875rem;
 `;
@@ -260,7 +282,7 @@ const WeddingDay = styled.div`
 const CountdownContainer = styled.div`
   margin: 2rem 0;
   width: 100%;
-  
+
   @media (max-width: 600px) {
     overflow-x: none;
   }
@@ -279,7 +301,7 @@ const CountdownWrapper = styled.div`
   flex-wrap: nowrap;
   min-width: fit-content;
   margin: 0 auto;
-  
+
   @media (max-width: 400px) {
     transform: scale(0.95);
     transform-origin: center center;
@@ -294,7 +316,7 @@ const CountdownWrapper = styled.div`
     transform: scale(0.65);
     transform-origin: center center;
   }
-  
+
   @media (max-width: 300px) {
     transform: scale(0.5);
     transform-origin: center center;
@@ -306,7 +328,7 @@ const CountdownItem = styled.div`
   flex-direction: column;
   align-items: center;
   padding: 0 1rem;
-  
+
   @media (max-width: 480px) {
     padding: 0 0.75rem;
   }
@@ -320,7 +342,7 @@ const CountdownValue = styled.div`
   min-width: 3rem;
   text-align: center;
   display: inline-block;
-  
+
   @media (max-width: 480px) {
     font-size: 1.85rem;
     min-width: 2.5rem;
@@ -342,7 +364,7 @@ const VerticalDivider = styled.div`
   background-color: var(--secondary-color);
   margin: 0 0.75rem;
   opacity: 0.8;
-  
+
   @media (max-width: 480px) {
     height: 3.75rem;
     margin: 0 0.25rem;
@@ -355,4 +377,4 @@ const WeddingDate = styled.p`
   margin-top: 2rem;
 `;
 
-export default DateSection; 
+export default DateSection;

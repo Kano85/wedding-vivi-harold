@@ -34,7 +34,7 @@ a {
   text-decoration: none;
 }
 
-/* 모바일 최적화 스타일 */
+/* Mobile-optimized styles */
 @media (max-width: 768px) {
   html {
     font-size: 14px;

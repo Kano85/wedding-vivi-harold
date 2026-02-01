@@ -9,7 +9,7 @@ interface GallerySectionProps {
   bgColor?: 'white' | 'beige';
 }
 
-// SVG 화살표 아이콘 컴포넌트 추가
+// SVG arrow icon components
 const ArrowLeftIcon = styled(({ className }: { className?: string }) => (
   <svg className={className} width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
     <circle cx="14" cy="14" r="14" fill="none"/>
@@ -27,7 +27,7 @@ const ArrowRightIcon = styled(({ className }: { className?: string }) => (
   margin-right: -0.25rem;
 `;
 
-// 로딩 스피너 컴포넌트 추가
+// Loading spinner component
 const LoadingSpinner = styled.div`
   width: 3rem;
   height: 3rem;
@@ -51,23 +51,23 @@ const GallerySection = ({ bgColor = 'white' }: GallerySectionProps) => {
   const [isExpandedImageLoading, setIsExpandedImageLoading] = useState<boolean>(false);
   const overlayRef = useRef<HTMLDivElement>(null);
   
-  // 갤러리 레이아웃 모드 (scroll 또는 grid)
+  // Gallery layout mode (scroll or grid)
   const galleryLayout = weddingConfig.gallery.layout || 'scroll';
   
-  // 디버깅을 위한 로그
+  // Debug logs
   console.log('Gallery Layout:', galleryLayout);
   console.log('Wedding Config Gallery:', weddingConfig.gallery);
   console.log('Gallery Layout from config:', weddingConfig.gallery.layout);
   
   useEffect(() => {
-    // API에서 갤러리 이미지 목록 가져오기
+    // Fetch gallery images from API
     const fetchGalleryImages = async () => {
       try {
         setIsLoading(true);
         const response = await fetch('/api/gallery');
         
         if (!response.ok) {
-          throw new Error('갤러리 이미지를 불러오는데 실패했습니다');
+          throw new Error('Failed to load gallery images');
         }
         
         const data = await response.json();
@@ -75,13 +75,13 @@ const GallerySection = ({ bgColor = 'white' }: GallerySectionProps) => {
         if (data.images && data.images.length > 0) {
           setImages(data.images);
         } else {
-          // API에서 이미지를 가져오지 못한 경우 기본 설정 사용
+          // Fall back to config if API returns no images
           setImages(weddingConfig.gallery.images);
         }
       } catch (err) {
-        console.error('갤러리 이미지 로드 오류:', err);
-        setError('이미지를 불러오는데 문제가 발생했습니다');
-        // 에러 발생 시 기본 설정 사용
+        console.error('Gallery image load error:', err);
+        setError('Something went wrong while loading images.');
+        // Fall back to config on error
         setImages(weddingConfig.gallery.images);
       } finally {
         setIsLoading(false);
@@ -91,13 +91,13 @@ const GallerySection = ({ bgColor = 'white' }: GallerySectionProps) => {
     fetchGalleryImages();
   }, []);
   
-  // 브라우저 뒤로가기 처리
+  // Handle browser back navigation
   useEffect(() => {
     if (expandedImage) {
-      // 이미지가 확대되었을 때 히스토리 항목 추가
+      // Push history state when image is expanded
       window.history.pushState({ expandedImage: true }, "");
       
-      // 뒤로가기 이벤트 리스너 추가
+      // Back navigation listener
       const handlePopState = (event: PopStateEvent) => {
         if (expandedImage) {
           setExpandedImage(null);
@@ -108,14 +108,14 @@ const GallerySection = ({ bgColor = 'white' }: GallerySectionProps) => {
       
       window.addEventListener('popstate', handlePopState);
       
-      // 컴포넌트 언마운트 시 리스너 제거
+      // Cleanup on unmount
       return () => {
         window.removeEventListener('popstate', handlePopState);
       };
     }
   }, [expandedImage]);
   
-  // 터치 이벤트 처리
+  // Touch event handling
   useEffect(() => {
     let startX = 0;
     let startY = 0;
@@ -131,13 +131,13 @@ const GallerySection = ({ bgColor = 'white' }: GallerySectionProps) => {
       const deltaX = endX - startX;
       const deltaY = endY - startY;
       
-      // 수평 스와이프가 수직 스와이프보다 클 때만 이미지 변경
+      // Only change image on dominant horizontal swipe
       if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
         if (deltaX > 0) {
-          // 오른쪽 스와이프 - 이전 이미지
+          // Swipe right - previous image
           goToPreviousImage();
         } else {
-          // 왼쪽 스와이프 - 다음 이미지
+          // Swipe left - next image
           goToNextImage();
         }
       }
@@ -157,7 +157,7 @@ const GallerySection = ({ bgColor = 'white' }: GallerySectionProps) => {
 
   const scrollLeft = () => {
     if (scrollContainerRef.current) {
-      // 한 아이템 너비(250px) + 갭(1rem = 16px)만큼만 스크롤
+      // Scroll by one card width + gap
       scrollContainerRef.current.scrollBy({
         left: -266,
         behavior: 'smooth'
@@ -167,7 +167,7 @@ const GallerySection = ({ bgColor = 'white' }: GallerySectionProps) => {
 
   const scrollRight = () => {
     if (scrollContainerRef.current) {
-      // 한 아이템 너비(250px) + 갭(1rem = 16px)만큼만 스크롤
+      // Scroll by one card width + gap
       scrollContainerRef.current.scrollBy({
         left: 266,
         behavior: 'smooth'
@@ -179,8 +179,8 @@ const GallerySection = ({ bgColor = 'white' }: GallerySectionProps) => {
     const imageIndex = images.indexOf(image);
     setExpandedImage(image);
     setExpandedImageIndex(imageIndex);
-    setIsExpandedImageLoading(true); // 이미지 로딩 시작
-    // 확대 이미지가 표시될 때 스크롤 방지
+    setIsExpandedImageLoading(true); // Start loading
+    // Prevent background scroll when expanded
     document.body.style.overflow = 'hidden';
   };
 
@@ -189,7 +189,7 @@ const GallerySection = ({ bgColor = 'white' }: GallerySectionProps) => {
       const newIndex = expandedImageIndex - 1;
       setExpandedImageIndex(newIndex);
       setExpandedImage(images[newIndex]);
-      setIsExpandedImageLoading(true); // 새 이미지 로딩 시작
+      setIsExpandedImageLoading(true); // Start loading next image
     }
   };
 
@@ -198,23 +198,23 @@ const GallerySection = ({ bgColor = 'white' }: GallerySectionProps) => {
       const newIndex = expandedImageIndex + 1;
       setExpandedImageIndex(newIndex);
       setExpandedImage(images[newIndex]);
-      setIsExpandedImageLoading(true); // 새 이미지 로딩 시작
+      setIsExpandedImageLoading(true); // Start loading next image
     }
   };
 
   const handleCloseExpanded = () => {
     setExpandedImage(null);
     setExpandedImageIndex(-1);
-    setIsExpandedImageLoading(false); // 로딩 상태 리셋
-    // 확대 이미지가 닫힐 때 스크롤 허용
+    setIsExpandedImageLoading(false); // Reset loading state
+    // Restore scroll when expanded image closes
     document.body.style.overflow = '';
-    // 뒤로가기 히스토리 처리
+    // Handle back navigation state
     if (window.history.state && window.history.state.expandedImage) {
       window.history.back();
     }
   };
   
-  // 키보드 이벤트 처리
+  // Keyboard event handling
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (expandedImage) {
@@ -239,10 +239,10 @@ const GallerySection = ({ bgColor = 'white' }: GallerySectionProps) => {
       if (expandedImage) {
         event.preventDefault();
         if (event.deltaY > 0) {
-          // 아래로 스크롤 - 다음 이미지
+          // Scroll down - next image
           goToNextImage();
         } else {
-          // 위로 스크롤 - 이전 이미지
+          // Scroll up - previous image
           goToPreviousImage();
         }
       }
@@ -258,12 +258,12 @@ const GallerySection = ({ bgColor = 'white' }: GallerySectionProps) => {
     }
   }, [expandedImage, expandedImageIndex, images]);
   
-  // 확대된 이미지 로드 완료 핸들러
+  // Expanded image load handler
   const handleExpandedImageLoad = () => {
     setIsExpandedImageLoading(false);
   };
 
-  // 확대된 이미지 로드 에러 핸들러
+  // Expanded image error handler
   const handleExpandedImageError = () => {
     setIsExpandedImageLoading(false);
   };
@@ -271,8 +271,8 @@ const GallerySection = ({ bgColor = 'white' }: GallerySectionProps) => {
   if (isLoading) {
     return (
       <GallerySectionContainer $bgColor={bgColor}>
-        <SectionTitle>갤러리</SectionTitle>
-        <LoadingContainer>이미지를 불러오는 중...</LoadingContainer>
+        <SectionTitle>Gallery</SectionTitle>
+        <LoadingContainer>Loading images...</LoadingContainer>
       </GallerySectionContainer>
     );
   }
@@ -280,9 +280,9 @@ const GallerySection = ({ bgColor = 'white' }: GallerySectionProps) => {
   if (error || images.length === 0) {
     return (
       <GallerySectionContainer $bgColor={bgColor}>
-        <SectionTitle>갤러리</SectionTitle>
+        <SectionTitle>Gallery</SectionTitle>
         <ErrorContainer>
-          {error || '갤러리 이미지가 없습니다'}
+          {error || 'No gallery images available.'}
         </ErrorContainer>
       </GallerySectionContainer>
     );
@@ -290,17 +290,17 @@ const GallerySection = ({ bgColor = 'white' }: GallerySectionProps) => {
   
   return (
     <GallerySectionContainer $bgColor={bgColor}>
-      <SectionTitle>갤러리</SectionTitle>
+      <SectionTitle>Gallery</SectionTitle>
       
       {galleryLayout === 'grid' ? (
-        // 그리드 레이아웃
+        // Grid layout
         <GalleryGridContainer>
           {images.map((image, index) => (
             <GalleryGridCard key={index} onClick={() => handleImageClick(image)}>
               <GalleryGridImageWrapper>
                 <GalleryNextImage 
                   src={image}
-                  alt={`웨딩 갤러리 이미지 ${index + 1}`}
+                  alt={`Wedding gallery image ${index + 1}`}
                   fill
                   sizes="(max-width: 768px) calc(33.333vw - 1rem), calc(33.333vw - 2rem)"
                   quality={85}
@@ -314,9 +314,9 @@ const GallerySection = ({ bgColor = 'white' }: GallerySectionProps) => {
           ))}
         </GalleryGridContainer>
       ) : (
-        // 스크롤 레이아웃 (기존)
+        // Scroll layout
         <GalleryContainer>
-          <GalleryButton onClick={scrollLeft} aria-label="이전 이미지들" className="left-button">
+          <GalleryButton onClick={scrollLeft} aria-label="Previous images" className="left-button">
             <ArrowLeftIcon />
           </GalleryButton>
           
@@ -326,7 +326,7 @@ const GallerySection = ({ bgColor = 'white' }: GallerySectionProps) => {
                 <GalleryImageWrapper>
                   <GalleryNextImage 
                     src={image}
-                    alt={`웨딩 갤러리 이미지 ${index + 1}`}
+                    alt={`Wedding gallery image ${index + 1}`}
                     fill
                     sizes="(max-width: 768px) 250px, 300px"
                     quality={85}
@@ -340,7 +340,7 @@ const GallerySection = ({ bgColor = 'white' }: GallerySectionProps) => {
             ))}
           </GalleryScrollContainer>
           
-          <GalleryButton onClick={scrollRight} aria-label="다음 이미지들" className="right-button">
+          <GalleryButton onClick={scrollRight} aria-label="Next images" className="right-button">
             <ArrowRightIcon />
           </GalleryButton>
         </GalleryContainer>
@@ -362,7 +362,7 @@ const GallerySection = ({ bgColor = 'white' }: GallerySectionProps) => {
             <ExpandedImageWrapper $isLoading={isExpandedImageLoading}>
               <Image 
                 src={expandedImage}
-                alt="확대된 웨딩 갤러리 이미지"
+                alt="Expanded wedding gallery image"
                 fill
                 sizes="90vw"
                 quality={90}
@@ -373,7 +373,7 @@ const GallerySection = ({ bgColor = 'white' }: GallerySectionProps) => {
                 onError={handleExpandedImageError}
               />
             </ExpandedImageWrapper>
-            <CloseButton onClick={handleCloseExpanded} aria-label="닫기">×</CloseButton>
+            <CloseButton onClick={handleCloseExpanded} aria-label="Close">×</CloseButton>
           </ExpandedImageContainer>
         </ExpandedImageOverlay>
       )}
@@ -439,7 +439,7 @@ const GalleryScrollContainer = styled.div`
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
   
-  /* 좌우 패딩을 추가하여 끝 아이템이 중앙에 오도록 설정 */
+  /* Add horizontal padding so end items center-align */
   padding-left: calc(50% - 125px);
   padding-right: calc(50% - 125px);
   
@@ -466,7 +466,7 @@ const GalleryCard = styled.div`
 const GalleryImageWrapper = styled.div`
   position: relative;
   width: 100%;
-  padding-bottom: 100%; /* 1:1 비율 (정사각형) */
+  padding-bottom: 100%; /* 1:1 ratio (square) */
 `;
 
 const GalleryNextImage = styled(Image)`
@@ -634,7 +634,7 @@ const GalleryGridCard = styled.div`
 const GalleryGridImageWrapper = styled.div`
   position: relative;
   width: 100%;
-  padding-bottom: 100%; /* 1:1 비율 (정사각형) */
+  padding-bottom: 100%; /* 1:1 ratio (square) */
 `;
 
 export default GallerySection; 

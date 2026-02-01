@@ -7,25 +7,25 @@ const watermarkId = weddingConfig.meta._jwk_watermark_id || 'JWK-NonCommercial';
 
 /**
  * @license
- * 웨딩 청첩장 템플릿
+ * Wedding invitation template
  * Copyright (c) 2025 Jawon Koo
- * 라이선스: CC BY-NC-ND 4.0
- * 저작자표시-비영리-변경금지
+ * License: CC BY-NC-ND 4.0
+ * Attribution-NonCommercial-NoDerivatives
  * https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko
  * 
- * 이 코드는 비상업적 용도로만 사용 가능합니다.
- * 상업적 용도로 사용 시 법적 조치가 취해질 수 있습니다.
+ * This code is for non-commercial use only.
+ * Commercial use may result in legal action.
  * ID: ${watermarkId}
  */
 
 export const GlobalStyle = createGlobalStyle`
-  /* 폰트 로딩 전에 적용될 스타일 */
+  /* Styles applied before font loading */
   @font-face {
     font-family: 'MaruBuri';
     src: url('/fonts/MaruBuri-ExtraLight.ttf') format('truetype');
     font-weight: 200;
     font-style: normal;
-    font-display: block; /* 폰트 로딩될 때까지 텍스트를 보이지 않게 함 */
+    font-display: block; /* Hide text until fonts load */
   }
   
   @font-face {
@@ -68,7 +68,7 @@ export const GlobalStyle = createGlobalStyle`
     font-display: block;
   }
   
-  /* 컨텐츠가 바로 보이지만 폰트가 로드되면 레이아웃이 바뀌는 것을 방지 */
+  /* Prevent layout shift when fonts load */
   html, body {
     visibility: visible;
     opacity: 1;

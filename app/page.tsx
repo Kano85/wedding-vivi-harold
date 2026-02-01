@@ -5,19 +5,19 @@ import dynamic from 'next/dynamic';
 import MainSection from '../src/components/sections/MainSection';
 import { weddingConfig } from '../src/config/wedding-config';
 
-// 동적 임포트로 코드 분할 및 지연 로딩 적용
+// Dynamic imports for code splitting and lazy loading
 const DateSection = dynamic(() => import('../src/components/sections/DateSection'), {
-  loading: () => <div style={{ padding: '4rem 1.5rem', textAlign: 'center' }}>로딩 중...</div>
+  loading: () => <div style={{ padding: '4rem 1.5rem', textAlign: 'center' }}>Loading...</div>
 });
 
-// 카카오맵 API는 클라이언트 사이드에서만 로드되어야 함
+// Kakao Map API should be loaded on the client only
 const VenueSection = dynamic(() => import('../src/components/sections/VenueSection'), {
   ssr: false,
-  loading: () => <div style={{ padding: '4rem 1.5rem', textAlign: 'center' }}>로딩 중...</div>
+  loading: () => <div style={{ padding: '4rem 1.5rem', textAlign: 'center' }}>Loading...</div>
 });
 
 const GallerySection = dynamic(() => import('../src/components/sections/GallerySection'), {
-  loading: () => <div style={{ padding: '4rem 1.5rem', textAlign: 'center' }}>로딩 중...</div>
+  loading: () => <div style={{ padding: '4rem 1.5rem', textAlign: 'center' }}>Loading...</div>
 });
 
 const InvitationSection = dynamic(() => import('../src/components/sections/InvitationSection'));
@@ -26,15 +26,15 @@ const AccountSection = dynamic(() => import('../src/components/sections/AccountS
 const Footer = dynamic(() => import('../src/components/sections/Footer'));
 
 export default function Home() {
-  // 갤러리 위치 설정
+  // Gallery position setting
   const galleryPosition = weddingConfig.gallery.position || 'middle';
   const showRsvp = weddingConfig.rsvp?.enabled ?? true;
 
-  // 실제 렌더링되는 섹션들의 순서를 계산하여 색상 인덱스 결정
+  // Calculate the render order to assign alternating section colors
   const sectionColorMap = useMemo(() => {
     const sections = [];
     
-    // MainSection은 색상 계산에서 제외 (항상 기본 스타일)
+    // MainSection is excluded from color calculation (always base style)
     sections.push('invitation'); // InvitationSection
     sections.push('date'); // DateSection  
     sections.push('venue'); // VenueSection
@@ -53,7 +53,7 @@ export default function Home() {
       sections.push('gallery-bottom'); // GallerySection (bottom)
     }
     
-    // 각 섹션에 색상 인덱스 할당 (0부터 시작하여 번갈아가며)
+    // Assign alternating colors per section (starting at 0)
     const colorMap: Record<string, 'white' | 'beige'> = {};
     sections.forEach((section, index) => {
       colorMap[section] = index % 2 === 0 ? 'white' : 'beige';

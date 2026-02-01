@@ -1,6 +1,6 @@
 const uniqueIdentifier = 'JWK-WEDDING-TEMPLATE-V1';
 
-// 갤러리 레이아웃 타입 정의
+// Gallery layout type definitions
 type GalleryLayout = 'scroll' | 'grid';
 type GalleryPosition = 'middle' | 'bottom';
 
@@ -11,16 +11,16 @@ interface GalleryConfig {
 }
 
 export const weddingConfig = {
-  // 메타 정보
+  // Meta info
   meta: {
-    title: '신랑 ❤️ 신부의 결혼식에 초대합니다',
-    description: '결혼식 초대장',
+    title: 'You are invited to our wedding',
+    description: 'Wedding invitation',
     ogImage: '/images/image11.jpg',
     noIndex: true,
     _jwk_watermark_id: uniqueIdentifier,
   },
 
-  // 메인 화면
+  // Main section
   main: {
     title: 'Wedding Invitation',
     image: '/images/image11.jpg',
@@ -28,64 +28,64 @@ export const weddingConfig = {
     venue: 'La Farinera de\nSant Lluis',
   },
 
-  // 소개글
+  // Intro
   intro: {
     title: '',
-    text: '서로를 바라보며 걸어온\n소중한 발걸음이\n이제 하나의 길로 이어집니다.\n\n사랑과 믿음으로\n새 가정을 이루는 저희 두 사람의\n작은 시작을 알려드립니다.',
+    text: 'Our steps, taken while looking at each other,\nnow join into one path.\n\nWith love and trust,\nwe are starting a new family together.\nPlease celebrate this small beginning with us.',
   },
 
-  // 결혼식 일정
+  // Wedding date/time
   date: {
     year: 2026,
-    month: 5,
-    day: 16,
-    hour: 12,
-    minute: 30,
-    displayDate: '2026.05.16 SAT PM 12:30',
+    month: 6,
+    day: 6,
+    hour: 15,
+    minute: 0,
+    displayDate: '2026.06.06 SAT 15:00',
   },
 
-  // 장소 정보
+  // Venue info
   venue: {
-    name: '웨딩홀 이름',
-    address: '서울특별시 강남구 테헤란로 123\n웨딩홀 이름',
+    name: 'Wedding Hall Name',
+    address: '123 Teheran-ro, Gangnam-gu, Seoul\nWedding Hall Name',
     tel: '02-1234-5678',
-    naverMapId: '웨딩홀 이름', // 네이버 지도 검색용 장소명
+    naverMapId: 'Wedding Hall Name', // Place name for Naver Map search
     coordinates: {
       latitude: 37.5665,
       longitude: 126.978,
     },
-    placeId: '123456789', // 네이버 지도 장소 ID
-    mapZoom: '17', // 지도 줌 레벨
-    mapNaverCoordinates: '14141300,4507203,15,0,0,0,dh', // 네이버 지도 길찾기 URL용 좌표 파라미터 (구 형식)
+    placeId: '123456789', // Naver Map place ID
+    mapZoom: '17', // Map zoom level
+    mapNaverCoordinates: '14141300,4507203,15,0,0,0,dh', // Naver Map directions URL coordinates (legacy format)
     transportation: {
-      subway: '지하철역 1번 출구에서 도보 5분',
-      bus: '간선\n 101, 102, 103\n지선\n 1234, 5678',
+      subway: '5-minute walk from Exit 1',
+      bus: 'Main\n 101, 102, 103\nLocal\n 1234, 5678',
     },
-    parking: '건물 지하 주차장 이용 가능 (2시간 무료)',
-    // 신랑측 배차 안내
+    parking: 'Basement parking available (2 hours free)',
+    // Groom side shuttle
     groomShuttle: {
-      location: '신랑측 배차 출발지',
-      departureTime: '오전 10시 30분 출발',
+      location: 'Groom shuttle pickup location',
+      departureTime: 'Departs at 10:30 AM',
       contact: {
-        name: '담당자명',
+        name: 'Contact name',
         tel: '010-1234-5678',
       },
     },
-    // 신부측 배차 안내
+    // Bride side shuttle
     brideShuttle: {
-      location: '신부측 배차 출발지',
-      departureTime: '오전 11시 출발',
+      location: 'Bride shuttle pickup location',
+      departureTime: 'Departs at 11:00 AM',
       contact: {
-        name: '담당자명',
+        name: 'Contact name',
         tel: '010-9876-5432',
       },
     },
   },
 
-  // 갤러리
+  // Gallery
   gallery: {
-    layout: 'grid' as GalleryLayout, // "scroll" 또는 "grid" 선택
-    position: 'bottom' as GalleryPosition, // "middle" (현재 위치) 또는 "bottom" (맨 하단) 선택
+    layout: 'grid' as GalleryLayout, // Choose "scroll" or "grid"
+    position: 'bottom' as GalleryPosition, // Choose "middle" (current spot) or "bottom" (end)
     images: [
       '/images/gallery/image1.jpg',
       '/images/gallery/image2.jpg',
@@ -99,68 +99,80 @@ export const weddingConfig = {
     ],
   } as GalleryConfig,
 
-  // 초대의 말씀
+  // Invitation message
   invitation: {
-    message:
-      'We’re getting married on the Costa Brava, We can’t wait to celebrate with our favorite people from different places, enjoy good vibes, and make great memories together. Your presence will mean everything to us',
+    message: [
+      'We’re getting married on the Costa Brava',
+      '',
+      '',
+      'We can’t wait to celebrate',
+      'with our favorite people',
+      'from different places',
+      '',
+      '',
+      'Enjoy good vibes',
+      '',
+      '',
+      'And make great memories together',
+      '',
+      '',
+      'Your presence',
+      'will mean everything to us',
+    ].join('\n'),
+
     groom: {
-      name: '신랑이름',
-      label: '아들',
-      father: '신랑아버지',
-      mother: '신랑어머니',
+      name: 'Harold Cano Cardenas',
     },
+
     bride: {
-      name: '신부이름',
-      label: '딸',
-      father: '신부아버지',
-      mother: '신부어머니',
+      name: 'Vivian Strube',
     },
   },
 
-  // 계좌번호
+  // Bank account info
   account: {
     groom: {
-      bank: '은행명',
+      bank: 'Bank Name',
       number: '123-456-789012',
-      holder: '신랑이름',
+      holder: 'Groom Name',
     },
     bride: {
-      bank: '은행명',
+      bank: 'Bank Name',
       number: '987-654-321098',
-      holder: '신부이름',
+      holder: 'Bride Name',
     },
     groomFather: {
-      bank: '은행명',
+      bank: 'Bank Name',
       number: '111-222-333444',
-      holder: '신랑아버지',
+      holder: 'Groom Father',
     },
     groomMother: {
-      bank: '은행명',
+      bank: 'Bank Name',
       number: '555-666-777888',
-      holder: '신랑어머니',
+      holder: 'Groom Mother',
     },
     brideFather: {
-      bank: '은행명',
+      bank: 'Bank Name',
       number: '999-000-111222',
-      holder: '신부아버지',
+      holder: 'Bride Father',
     },
     brideMother: {
-      bank: '은행명',
+      bank: 'Bank Name',
       number: '333-444-555666',
-      holder: '신부어머니',
+      holder: 'Bride Mother',
     },
   },
 
-  // RSVP 설정
+  // RSVP settings
   rsvp: {
-    enabled: false, // RSVP 섹션 표시 여부
-    showMealOption: false, // 식사 여부 입력 옵션 표시 여부
+    enabled: false, // Show RSVP section
+    showMealOption: false, // Show meal option field
   },
 
-  // 슬랙 알림 설정
+  // Slack notification settings
   slack: {
     webhookUrl: process.env.NEXT_PUBLIC_SLACK_WEBHOOK_URL || '',
     channel: '#wedding-response',
-    compactMessage: true, // 슬랙 메시지를 간결하게 표시
+    compactMessage: true, // Keep Slack messages concise
   },
 };

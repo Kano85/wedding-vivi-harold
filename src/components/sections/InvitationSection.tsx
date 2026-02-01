@@ -60,11 +60,11 @@ const InvitationSection = ({ bgColor = 'white' }: InvitationSectionProps) => {
           {hasGroomParents ? (
             <ParentsNames>
               {groomParentsText}
-              <ParentLabel>의 {invitation.groom.label || "아들"}</ParentLabel>
+              <ParentLabel>{"'s"} {invitation.groom.label || "son"}</ParentLabel>
             </ParentsNames>
           ) : (
             <ParentsNames>
-              <ParentLabel>신랑</ParentLabel>
+              <ParentLabel>Groom</ParentLabel>
             </ParentsNames>
           )}
           <CoupleName>{invitation.groom.name}</CoupleName>
@@ -74,11 +74,11 @@ const InvitationSection = ({ bgColor = 'white' }: InvitationSectionProps) => {
           {hasBrideParents ? (
             <ParentsNames>
               {brideParentsText}
-              <ParentLabel>의 {invitation.bride.label || "딸"}</ParentLabel>
+              <ParentLabel>{"'s"} {invitation.bride.label || "daughter"}</ParentLabel>
             </ParentsNames>
           ) : (
             <ParentsNames>
-              <ParentLabel>신부</ParentLabel>
+              <ParentLabel>Bride</ParentLabel>
             </ParentsNames>
           )}
           <CoupleName>{invitation.bride.name}</CoupleName>
