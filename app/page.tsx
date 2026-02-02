@@ -1,29 +1,16 @@
 'use client';
 
-import { Suspense, useMemo } from 'react';
-import dynamic from 'next/dynamic';
+import { useMemo } from 'react';
 import MainSection from '../src/components/sections/MainSection';
+import InvitationSection from '../src/components/sections/InvitationSection';
+import DateSection from '../src/components/sections/DateSection';
+import VenueSection from '../src/components/sections/VenueSection';
+import MusicSection from '../src/components/sections/MusicSection';
+import GallerySection from '../src/components/sections/GallerySection';
+import RsvpSection from '../src/components/sections/RsvpSection';
+import AccountSection from '../src/components/sections/AccountSection';
+import Footer from '../src/components/sections/Footer';
 import { weddingConfig } from '../src/config/wedding-config';
-
-// Dynamic imports for code splitting and lazy loading
-const DateSection = dynamic(() => import('../src/components/sections/DateSection'), {
-  loading: () => <div style={{ padding: '4rem 1.5rem', textAlign: 'center' }}>Loading...</div>
-});
-
-// Kakao Map API should be loaded on the client only
-const VenueSection = dynamic(() => import('../src/components/sections/VenueSection'), {
-  ssr: false,
-  loading: () => <div style={{ padding: '4rem 1.5rem', textAlign: 'center' }}>Loading...</div>
-});
-
-const GallerySection = dynamic(() => import('../src/components/sections/GallerySection'), {
-  loading: () => <div style={{ padding: '4rem 1.5rem', textAlign: 'center' }}>Loading...</div>
-});
-
-const InvitationSection = dynamic(() => import('../src/components/sections/InvitationSection'));
-const RsvpSection = dynamic(() => import('../src/components/sections/RsvpSection'));
-const AccountSection = dynamic(() => import('../src/components/sections/AccountSection'));
-const Footer = dynamic(() => import('../src/components/sections/Footer'));
 
 export default function Home() {
   // Gallery position setting
@@ -38,6 +25,7 @@ export default function Home() {
     sections.push('invitation'); // InvitationSection
     sections.push('date'); // DateSection  
     sections.push('venue'); // VenueSection
+    sections.push('music'); // MusicSection
     
     if (galleryPosition === 'middle') {
       sections.push('gallery-middle'); // GallerySection (middle)
@@ -68,6 +56,7 @@ export default function Home() {
       <InvitationSection bgColor={sectionColorMap['invitation']} />
       <DateSection bgColor={sectionColorMap['date']} />
       <VenueSection bgColor={sectionColorMap['venue']} />
+      <MusicSection bgColor={sectionColorMap['music']} />
       {galleryPosition === 'middle' && <GallerySection bgColor={sectionColorMap['gallery-middle']} />}
       {showRsvp && <RsvpSection bgColor={sectionColorMap['rsvp']} />}
       <AccountSection bgColor={sectionColorMap['account']} />

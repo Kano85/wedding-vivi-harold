@@ -87,31 +87,10 @@ const AccountSection = ({ bgColor = 'white' }: AccountSectionProps) => {
     }
   };
 
-  // Resolve display name by person
-  const getPersonName = (person: AccountPerson): string => {
-    switch(person) {
-      case 'groom':
-        return weddingConfig.invitation.groom.name;
-      case 'bride':
-        return weddingConfig.invitation.bride.name;
-      case 'groomFather':
-        return weddingConfig.invitation.groom.father;
-      case 'groomMother':
-        return weddingConfig.invitation.groom.mother;
-      case 'brideFather':
-        return weddingConfig.invitation.bride.father;
-      case 'brideMother':
-        return weddingConfig.invitation.bride.mother;
-      default:
-        return '';
-    }
-  };
-
   // Render a single account row
   const renderAccountRow = (accountInfo: AccountInfo, person: AccountPerson, title: string) => {
-    // Skip if the person name is missing
-    const personName = getPersonName(person);
-    if (!personName || personName.trim() === '') {
+    // Skip if the holder name is missing
+    if (!accountInfo.holder || accountInfo.holder.trim() === '') {
       return null;
     }
 

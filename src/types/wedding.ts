@@ -18,29 +18,26 @@ export interface ShuttleContact {
   tel: string;
 }
 
-export interface ShuttleInfo {
-  location: string;
-  departureTime: string;
-  contact: ShuttleContact;
+export interface TravelInfo {
+  title: string;
+  details: string;
 }
 
 export interface Venue {
   name: string;
   address: string;
   tel: string;
-  naverMapId: string;
   coordinates: {
     latitude: number;
     longitude: number;
   };
-  placeId: string;
-  mapZoom: string;
-  mapNaverCoordinates?: string;
+  mapZoom: number;
+  mapId?: string;
   transportation: {
     subway: string;
     bus: string;
   };
   parking: string;
-  groomShuttle?: ShuttleInfo;
-  brideShuttle?: ShuttleInfo;
+  travelInfoLocal?: TravelInfo;
+  travelInfoOutside?: TravelInfo;
 } 

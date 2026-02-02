@@ -19,7 +19,7 @@
 - 세로형 전체 화면 메인 이미지와 결혼 정보 표시
 - 섹션별로 구분된 결혼 관련 정보 제공 (동적 배경색 시스템)
 - 실시간 D-day 카운트다운 타이머 (숫자 고정 너비 적용)
-- 네이버 지도 API를 활용한 위치 정보 제공 및 길찾기 기능
+- MapTiler (MapLibre) 기반 위치 지도 + 마커 표시
 - 이미지 갤러리 (스크롤/그리드 레이아웃 선택 가능, 위치 설정 가능, 터치 스와이프 지원)
 - 참석 여부 응답 시스템 및 Slack 연동 알림 (활성화/비활성화 설정 가능)
 - 계좌번호 아코디언 펼침/접기 기능 및 복사 기능
@@ -33,7 +33,7 @@
 - Next.js 14 (App Router)
 - TypeScript
 - styled-components
-- 네이버 지도 API
+- MapTiler (MapLibre GL JS)
 - Web Share API
 - Slack Webhook API
 
@@ -54,8 +54,8 @@
 
 3. `.env.local` 파일 생성:
    ```
-   # 네이버 지도 API 클라이언트 ID
-   NEXT_PUBLIC_NAVER_MAP_CLIENT_ID=your_naver_map_client_id
+   # MapTiler API Key
+   NEXT_PUBLIC_MAPTILER_KEY=your_maptiler_key_here
    
    # Slack Webhook URL (참석 여부 알림용)
    NEXT_PUBLIC_SLACK_WEBHOOK_URL=your_slack_webhook_url
@@ -98,74 +98,32 @@ rsvp: {
 - `enabled: false`로 설정하면 RSVP 섹션이 완전히 숨겨집니다.
 - 이 경우 동적 배경색 시스템이 자동으로 조정되어 다른 섹션들의 색상이 자연스럽게 번갈아 나타납니다.
 
-## 네이버 지도 API 설정하기
+## MapTiler 설정하기
 
-### 네이버 클라우드 플랫폼 API 키 발급 방법
+### MapTiler API 키 발급 방법
 
-1. [네이버 클라우드 플랫폼](https://www.ncloud.com/)에 가입 및 로그인합니다.
-2. 콘솔에서 "Products & Services" > "AI·Application Service" > "Maps"로 이동합니다.
-3. "Application 등록" 버튼을 클릭하여 새 애플리케이션을 생성합니다.
-4. 애플리케이션 이름을 입력하고, "WEB 환경"을 선택합니다.
-5. 웹 서비스 URL에 배포할 도메인 또는 개발용 URL([http://localhost:3000](http://localhost:3000))을 등록합니다.
-   - 로컬 개발 환경: http://localhost:3000
-   - 실제 배포 환경: https://your-wedding-site.com
-6. 인증 정보(Client ID)를 `.env.local` 파일의 `NEXT_PUBLIC_NAVER_MAP_CLIENT_ID` 값으로 설정합니다.
+1. [MapTiler Cloud](https://cloud.maptiler.com/)에 가입 및 로그인합니다.
+2. 대시보드에서 API 키를 생성합니다.
+3. `.env.local` 파일에 `NEXT_PUBLIC_MAPTILER_KEY` 값을 설정합니다.
 
 ### 지도 설정하기
 
-웨딩 장소의 지도는 네이버 지도 API를 사용합니다. `wedding-config.ts` 파일에서 다음과 같이 설정할 수 있습니다:
+웨딩 장소의 지도는 MapTiler (MapLibre GL JS)를 사용합니다. `wedding-config.ts` 파일에서 다음과 같이 설정할 수 있습니다:
 
 ```typescript
 venue: {
   name: "홀 이름",
   address: "주소",
   tel: "전화번호",
-  naverMapId: "네이버 지도 검색용 장소명",
   coordinates: {
     latitude: 37.5045,  // 위도
     longitude: 127.0495 // 경도
   },
-  placeId: "12136346", // 네이버 지도 장소 ID
-  mapZoom: "17.08",    // 지도 줌 레벨
+  mapZoom: 16, // 지도 줌 레벨
+  mapId: "streets-v2-light", // MapTiler 스타일 ID
   // ... 기타 설정
-  
-  // 신랑측 배차 안내 (없으면 표시되지 않음)
-  groomShuttle: {
-    location: "서울역 2번 출구 앞",
-    departureTime: "오전 10시 30분 출발",
-    contact: {
-      name: "김철수",
-      tel: "010-1234-5678"
-    }
-  },
-  
-  // 신부측 배차 안내 (없으면 표시되지 않음)
-  brideShuttle: {
-    location: "강남역 4번 출구 앞",
-    departureTime: "오전 10시 30분 출발",
-    contact: {
-      name: "박영희",
-      tel: "010-8765-4321"
-    }
-  }
 }
 ```
-
-#### 좌표 및 장소 ID 찾는 방법
-
-1. [네이버 지도](https://map.naver.com)에서 결혼식장을 검색합니다.
-2. 검색된 장소를 클릭하여 상세 정보를 확인합니다.
-3. 브라우저 주소창에서 URL을 확인합니다:
-   - `https://map.naver.com/p/search/장소명/place/12345678` 형식의 URL에서 마지막 숫자가 `placeId`입니다.
-4. 길찾기 URL에 들어가면 줌 레벨을 포함한 좌표를 확인할 수 있습니다:
-   - `https://map.naver.com/p/directions/-/-/-/walk/place/12345678?c=17.08,0,0,0,dh`
-   - 위 URL에서 `c=` 다음의 첫 번째 값(`17.08`)이 `mapZoom` 값입니다.
-5. 위도와 경도는 네이버 지도 개발자 도구를 열고 콘솔에서 다음 명령어로 확인할 수 있습니다:
-   ```javascript
-   // 브라우저 콘솔에서 실행
-   console.log(map.getCenter().toString());
-   // 출력: lat: 37.1234, lng: 127.5678
-   ```
 
 ### 갤러리 설정하기
 
@@ -347,7 +305,7 @@ gallery: {
 1. **코드 분할**: 동적 임포트를 사용하여 각 섹션을 필요할 때 로드합니다.
 2. **이미지 최적화**: next/image를 사용하여 이미지를 최적화하였습니다.
 3. **지연 로딩**: 갤러리 이미지에 지연 로딩을 적용했습니다.
-4. **스크립트 최적화**: 네이버 지도 API는 필요할 때만 동적으로 로드됩니다.
+4. **스크립트 최적화**: MapTiler 지도는 클라이언트에서만 로드됩니다.
 5. **모바일 터치 최적화**: 버튼에 리플 효과 및 터치 피드백 적용으로 UX 향상
 6. **동적 색상 시스템**: 빌드 타임에 색상을 계산하여 런타임 성능 향상
 7. **조건부 렌더링**: RSVP 등 불필요한 섹션은 완전히 제외하여 번들 크기 최적화
@@ -360,16 +318,11 @@ gallery: {
 
 ## 문제 해결
 
-### 네이버 지도가 표시되지 않는 경우
+### MapTiler 지도가 표시되지 않는 경우
 
-- `.env.local` 파일에 올바른 클라이언트 ID가 설정되어 있는지 확인하세요.
-- 네이버 클라우드 플랫폼 콘솔에서 웹 서비스 URL이 정확히 등록되었는지 확인하세요.
+- `.env.local` 파일에 `NEXT_PUBLIC_MAPTILER_KEY`가 설정되어 있는지 확인하세요.
 - 브라우저 콘솔에 오류 메시지를 확인하세요.
-- 인증 오류 메시지가 나타나면 다음을 확인하세요:
-  - 클라이언트 ID가 정확한지
-  - 웹 서비스 URL에 현재 접속 중인 도메인이 등록되어 있는지
-  - 로컬 개발 시 http://localhost:3000이 등록되어 있는지
-  - 배포 시 실제 도메인이 등록되어 있는지
+- 키가 만료되었거나 권한이 없는 경우 새 키를 발급하세요.
 
 ### 참석 여부 알림이 Slack으로 전송되지 않는 경우
 

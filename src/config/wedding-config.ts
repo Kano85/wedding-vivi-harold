@@ -46,39 +46,30 @@ export const weddingConfig = {
 
   // Venue info
   venue: {
-    name: 'Wedding Hall Name',
-    address: '123 Teheran-ro, Gangnam-gu, Seoul\nWedding Hall Name',
-    tel: '02-1234-5678',
-    naverMapId: 'Wedding Hall Name', // Place name for Naver Map search
+    name: 'La Farinera Sant Lluís',
+    address: 'La Farinera Sant Lluís, N-2, Km.761, 2, 17706 Pont de Molins, Girona, Spain',
+    tel: '+34672142651',
     coordinates: {
-      latitude: 37.5665,
-      longitude: 126.978,
+      latitude: 42.31125,
+      longitude: 2.93287,
     },
-    placeId: '123456789', // Naver Map place ID
-    mapZoom: '17', // Map zoom level
-    mapNaverCoordinates: '14141300,4507203,15,0,0,0,dh', // Naver Map directions URL coordinates (legacy format)
+    mapZoom: 16,
+    mapId: 'streets-v2-light',
     transportation: {
-      subway: '5-minute walk from Exit 1',
-      bus: 'Main\n 101, 102, 103\nLocal\n 1234, 5678',
+      subway: 'The train will bring you to Figueres. We can arrange a shuttle from Figueres. More details will be shared closer to the event date, stay tuned.',
+      bus: 'The train will bring you to Figueres. We can arrange a shuttle from Figueres. More details will be shared closer to the event date, stay tuned.',
     },
-    parking: 'Basement parking available (2 hours free)',
-    // Groom side shuttle
-    groomShuttle: {
-      location: 'Groom shuttle pickup location',
-      departureTime: 'Departs at 10:30 AM',
-      contact: {
-        name: 'Contact name',
-        tel: '010-1234-5678',
-      },
+    parking: 'Parking available on site.',
+    // Travel info (local / outside Catalunya)
+    travelInfoLocal: {
+      title: 'Barcelona / Catalunya',
+      details:
+        'Please take the train to Figueres. We are planning a shuttle from Figueres to the venue. More details will be shared closer to the event date, stay tuned.',
     },
-    // Bride side shuttle
-    brideShuttle: {
-      location: 'Bride shuttle pickup location',
-      departureTime: 'Departs at 11:00 AM',
-      contact: {
-        name: 'Contact name',
-        tel: '010-9876-5432',
-      },
+    travelInfoOutside: {
+      title: 'Outside Catalunya / Flying In',
+      details:
+        'If you are arriving from outside Catalunya, the closest airports are Barcelona (BCN) and Girona (GRO). From there, take a train to Figueres. We are planning a shuttle from Figueres to the venue. More details will be shared closer to the event date, stay tuned.',
     },
   },
 
