@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
+import { formatShortDate, type SiteLanguage } from '../../lib/i18n';
 
 const STORAGE_KEY = 'wedding_music_requests_v1';
 
@@ -47,15 +48,47 @@ const saveStored = (items: Submission[]) => {
 
 interface MusicSectionProps {
   bgColor?: 'white' | 'beige';
+  language: SiteLanguage;
 }
 
-const MusicSection = ({ bgColor = 'white' }: MusicSectionProps) => {
+const MusicSection = ({ bgColor = 'white', language }: MusicSectionProps) => {
   const [name, setName] = useState('');
   const [message, setMessage] = useState('');
   const [spotifyUrl, setSpotifyUrl] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [items, setItems] = useState<Submission[]>([]);
+  const t = language === 'es'
+    ? {
+        title: 'Solicitudes de Musica',
+        intro: 'Comparte una cancion o playlist de Spotify para la celebracion. Revisaremos y agregaremos favoritas cerca de la fecha.',
+        name: 'Nombre',
+        yourName: 'Tu nombre',
+        message: 'Mensaje (opcional)',
+        whySong: 'Por que esta cancion?',
+        spotifyUrl: 'URL de Spotify',
+        password: 'Codigo',
+        passwordRequired: 'Codigo requerido',
+        submit: 'Enviar',
+        addName: 'Por favor agrega tu nombre.',
+        incorrectPassword: 'Codigo incorrecto.',
+        invalidSpotify: 'Agrega un enlace valido de Spotify (cancion o playlist).',
+      }
+    : {
+        title: 'Musikwuensche',
+        intro: 'Teile einen Spotify-Song oder eine Playlist fuer die Feier. Wir pruefen alles und fuegen Favoriten naeher am Datum hinzu.',
+        name: 'Name',
+        yourName: 'Dein Name',
+        message: 'Nachricht (optional)',
+        whySong: 'Warum dieses Lied?',
+        spotifyUrl: 'Spotify URL',
+        password: 'Code',
+        passwordRequired: 'Code erforderlich',
+        submit: 'Senden',
+        addName: 'Bitte gib deinen Namen ein.',
+        incorrectPassword: 'Falscher Code.',
+        invalidSpotify: 'Bitte fuege einen gueltigen Spotify-Link (Song oder Playlist) ein.',
+      };
 
   useEffect(() => {
     setItems(loadStored());
@@ -70,18 +103,18 @@ const MusicSection = ({ bgColor = 'white' }: MusicSectionProps) => {
     setError('');
 
     if (!name.trim()) {
-      setError('Please add your name.');
+      setError(t.addName);
       return;
     }
 
     const expectedPassword = process.env.NEXT_PUBLIC_MUSIC_SUBMIT_PASSWORD || '';
     if (!expectedPassword || password.trim() !== expectedPassword) {
-      setError('Incorrect password.');
+      setError(t.incorrectPassword);
       return;
     }
 
     if (!spotifyUrl.trim() || !isSpotifyUrl(spotifyUrl.trim())) {
-      setError('Please add a valid Spotify track or playlist link.');
+      setError(t.invalidSpotify);
       return;
     }
 
@@ -105,35 +138,33 @@ const MusicSection = ({ bgColor = 'white' }: MusicSectionProps) => {
 
   return (
     <SectionContainer $bgColor={bgColor}>
-      <SectionTitle>Music Requests</SectionTitle>
-      <SectionIntro>
-        Share a Spotify track or playlist for the celebration. We will review and add favorites closer to the date.
-      </SectionIntro>
+      <SectionTitle>{t.title}</SectionTitle>
+      <SectionIntro>{t.intro}</SectionIntro>
 
       <FormCard>
         <Form onSubmit={onSubmit}>
           <Field>
-            <Label htmlFor="music-name">Name</Label>
+            <Label htmlFor="music-name">{t.name}</Label>
             <Input
               id="music-name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Your name"
+              placeholder={t.yourName}
             />
           </Field>
 
           <Field>
-            <Label htmlFor="music-message">Message (optional)</Label>
+            <Label htmlFor="music-message">{t.message}</Label>
             <Input
               id="music-message"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder="Why this song?"
+              placeholder={t.whySong}
             />
           </Field>
 
           <Field>
-            <Label htmlFor="music-spotify">Spotify URL</Label>
+            <Label htmlFor="music-spotify">{t.spotifyUrl}</Label>
             <Input
               id="music-spotify"
               value={spotifyUrl}
@@ -143,19 +174,19 @@ const MusicSection = ({ bgColor = 'white' }: MusicSectionProps) => {
           </Field>
 
           <Field>
-            <Label htmlFor="music-password">Password</Label>
+            <Label htmlFor="music-password">{t.password}</Label>
             <Input
               id="music-password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password required"
+              placeholder={t.passwordRequired}
             />
           </Field>
 
           {error && <ErrorText>{error}</ErrorText>}
 
-          <SubmitButton type="submit">Submit</SubmitButton>
+          <SubmitButton type="submit">{t.submit}</SubmitButton>
         </Form>
       </FormCard>
 
@@ -165,7 +196,7 @@ const MusicSection = ({ bgColor = 'white' }: MusicSectionProps) => {
             <ListItem key={item.id}>
               <ListHeader>
                 <ListName>{item.name}</ListName>
-                <ListDate>{new Date(item.createdAt).toLocaleDateString()}</ListDate>
+                <ListDate>{formatShortDate(language, item.createdAt)}</ListDate>
               </ListHeader>
               {item.message && <ListMessage>{item.message}</ListMessage>}
               <Embed

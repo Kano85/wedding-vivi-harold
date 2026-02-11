@@ -4,15 +4,17 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { weddingConfig } from '../../config/wedding-config';
 import { AccountInfo } from '../../types/wedding';
+import type { SiteLanguage } from '../../lib/i18n';
 
 type AccountPerson = 'groom' | 'bride' | 'groomFather' | 'groomMother' | 'brideFather' | 'brideMother';
 type AccountSide = 'groom' | 'bride';
 
 interface AccountSectionProps {
   bgColor?: 'white' | 'beige';
+  language: SiteLanguage;
 }
 
-const AccountSection = ({ bgColor = 'white' }: AccountSectionProps) => {
+const AccountSection = ({ bgColor = 'white', language }: AccountSectionProps) => {
   const [copyStatus, setCopyStatus] = useState<Record<AccountPerson, boolean>>({
     groom: false,
     bride: false,
@@ -27,6 +29,39 @@ const AccountSection = ({ bgColor = 'white' }: AccountSectionProps) => {
 
   // Account group expand/collapse state
   const [expandedSide, setExpandedSide] = useState<AccountSide | null>(null);
+  const t = language === 'es'
+    ? {
+        sectionTitle: 'Cuentas de Regalo',
+        groomSide: 'Cuentas del Novio',
+        brideSide: 'Cuentas de la Novia',
+        groom: 'Novio',
+        bride: 'Novia',
+        father: 'Padre',
+        mother: 'Madre',
+        copied: 'Copiado',
+        copy: 'Copiar',
+        copyUrl: 'Copiar URL',
+        copiedUrl: 'Copiado!',
+        share: 'Compartir',
+        notSupported: 'Compartir no esta disponible en este navegador. La URL fue copiada.',
+        shareText: `${weddingConfig.invitation.groom.name} y ${weddingConfig.invitation.bride.name} te invitan a su boda`,
+      }
+    : {
+        sectionTitle: 'Geschenkkonten',
+        groomSide: 'Konten der Braeutigamseite',
+        brideSide: 'Konten der Brautseite',
+        groom: 'Braeutigam',
+        bride: 'Braut',
+        father: 'Vater',
+        mother: 'Mutter',
+        copied: 'Kopiert',
+        copy: 'Kopieren',
+        copyUrl: 'URL kopieren',
+        copiedUrl: 'Kopiert!',
+        share: 'Teilen',
+        notSupported: 'Teilen wird in diesem Browser nicht unterstuetzt. Die URL wurde kopiert.',
+        shareText: `${weddingConfig.invitation.groom.name} und ${weddingConfig.invitation.bride.name} laden dich zu ihrer Hochzeit ein`,
+      };
 
   const toggleSide = (side: AccountSide) => {
     if (expandedSide === side) {
@@ -70,7 +105,7 @@ const AccountSection = ({ bgColor = 'white' }: AccountSectionProps) => {
   const shareWebsite = async () => {
     const shareData = {
       title: weddingConfig.meta.title,
-      text: `${weddingConfig.invitation.groom.name} ♥ ${weddingConfig.invitation.bride.name} invite you to their wedding`,
+      text: t.shareText,
       url: window.location.href,
     };
     
@@ -80,7 +115,7 @@ const AccountSection = ({ bgColor = 'white' }: AccountSectionProps) => {
       } else {
         // Fall back to copying URL if Web Share API isn't available
         copyWebsiteUrl();
-        alert('Sharing is not supported in this browser. The URL has been copied.');
+        alert(t.notSupported);
       }
     } catch (error) {
       console.error('Share failed:', error);
@@ -116,7 +151,7 @@ const AccountSection = ({ bgColor = 'white' }: AccountSectionProps) => {
             copyToClipboard(copyText, person);
           }}
         >
-          {copyStatus[person] ? 'Copied' : 'Copy'}
+          {copyStatus[person] ? t.copied : t.copy}
         </CopyButton>
       </AccountRow>
     );
@@ -124,13 +159,13 @@ const AccountSection = ({ bgColor = 'white' }: AccountSectionProps) => {
 
   return (
     <AccountSectionContainer $bgColor={bgColor}>
-      <SectionTitle>Gift Accounts</SectionTitle>
+      <SectionTitle>{t.sectionTitle}</SectionTitle>
       
       <AccountCards>
         {/* Groom side accounts */}
         <AccountCard onClick={() => toggleSide('groom')}>
           <AccountCardHeader $isExpanded={expandedSide === 'groom'}>
-            <GroupTitle>Groom Side Accounts</GroupTitle>
+            <GroupTitle>{t.groomSide}</GroupTitle>
             <ExpandIcon $isExpanded={expandedSide === 'groom'}>
               {expandedSide === 'groom' ? '−' : '+'}
             </ExpandIcon>
@@ -138,9 +173,9 @@ const AccountSection = ({ bgColor = 'white' }: AccountSectionProps) => {
           
           {expandedSide === 'groom' && (
             <AccountRowsContainer>
-              {renderAccountRow(weddingConfig.account.groom, 'groom', 'Groom')}
-              {renderAccountRow(weddingConfig.account.groomFather, 'groomFather', 'Father')}
-              {renderAccountRow(weddingConfig.account.groomMother, 'groomMother', 'Mother')}
+              {renderAccountRow(weddingConfig.account.groom, 'groom', t.groom)}
+              {renderAccountRow(weddingConfig.account.groomFather, 'groomFather', t.father)}
+              {renderAccountRow(weddingConfig.account.groomMother, 'groomMother', t.mother)}
             </AccountRowsContainer>
           )}
         </AccountCard>
@@ -148,7 +183,7 @@ const AccountSection = ({ bgColor = 'white' }: AccountSectionProps) => {
         {/* Bride side accounts */}
         <AccountCard onClick={() => toggleSide('bride')}>
           <AccountCardHeader $isExpanded={expandedSide === 'bride'}>
-            <GroupTitle>Bride Side Accounts</GroupTitle>
+            <GroupTitle>{t.brideSide}</GroupTitle>
             <ExpandIcon $isExpanded={expandedSide === 'bride'}>
               {expandedSide === 'bride' ? '−' : '+'}
             </ExpandIcon>
@@ -156,9 +191,9 @@ const AccountSection = ({ bgColor = 'white' }: AccountSectionProps) => {
           
           {expandedSide === 'bride' && (
             <AccountRowsContainer>
-              {renderAccountRow(weddingConfig.account.bride, 'bride', 'Bride')}
-              {renderAccountRow(weddingConfig.account.brideFather, 'brideFather', 'Father')}
-              {renderAccountRow(weddingConfig.account.brideMother, 'brideMother', 'Mother')}
+              {renderAccountRow(weddingConfig.account.bride, 'bride', t.bride)}
+              {renderAccountRow(weddingConfig.account.brideFather, 'brideFather', t.father)}
+              {renderAccountRow(weddingConfig.account.brideMother, 'brideMother', t.mother)}
             </AccountRowsContainer>
           )}
         </AccountCard>
@@ -167,10 +202,10 @@ const AccountSection = ({ bgColor = 'white' }: AccountSectionProps) => {
       {/* Share invitation buttons */}
       <ShareContainer>
         <ShareButton onClick={copyWebsiteUrl}>
-          {urlCopied ? 'Copied!' : 'Copy URL'}
+          {urlCopied ? t.copiedUrl : t.copyUrl}
         </ShareButton>
         <ShareButton onClick={shareWebsite} $isShare={true}>
-          Share
+          {t.share}
         </ShareButton>
       </ShareContainer>
     </AccountSectionContainer>

@@ -4,10 +4,19 @@ import React from 'react';
 import styled from 'styled-components';
 import Image from 'next/image';
 import { weddingConfig } from '../../config/wedding-config';
+import { formatWeddingDate, type SiteLanguage } from '../../lib/i18n';
 
 const watermarkId = weddingConfig.meta._jwk_watermark_id || 'JWK-NonCommercial';
 
-const MainSection = () => {
+interface MainSectionProps {
+  language: SiteLanguage;
+}
+
+const MainSection = ({ language }: MainSectionProps) => {
+  const title = language === 'es' ? 'Invitacion de Boda' : 'Hochzeitseinladung';
+  const dateText = formatWeddingDate(language, weddingConfig.date);
+  const imageAlt = language === 'es' ? 'Imagen de fondo de boda' : 'Hochzeits-Hintergrundbild';
+
   return (
     <MainSectionContainer
       className={`wedding-container jwk-${watermarkId.slice(0, 8)}-main`}
@@ -15,7 +24,7 @@ const MainSection = () => {
       {}
       <BackgroundImage
         src={weddingConfig.main.image}
-        alt="Wedding background image"
+        alt={imageAlt}
         fill
         priority
         sizes="100vw"
@@ -24,8 +33,8 @@ const MainSection = () => {
       />
       <Overlay />
       <MainContent>
-        <MainTitle>{weddingConfig.main.title}</MainTitle>
-        <DateText>{weddingConfig.main.date}</DateText>
+        <MainTitle>{title}</MainTitle>
+        <DateText>{dateText}</DateText>
         <VenueText>{weddingConfig.main.venue}</VenueText>
         {}
         <HiddenWatermark aria-hidden="true">{watermarkId}</HiddenWatermark>
@@ -84,9 +93,9 @@ const Overlay = styled.div`
 const MainContent = styled.div`
   position: relative;
   z-index: 2;
-  margin-top: 0.5vh;
+  margin-top: clamp(3.8rem, 8vh, 5.8rem);
   @media (max-width: 600px) {
-    margin-top: 0.5vh;
+    margin-top: clamp(4.2rem, 9vh, 6.2rem);
     padding-left: 1rem;
     padding-right: 1rem;
   }

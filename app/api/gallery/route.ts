@@ -1,52 +1,72 @@
-import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-import { weddingConfig } from '../../../src/config/wedding-config';
+import { NextRequest, NextResponse } from 'next/server';
+import {
+  getAllGalleryItems,
+  getApprovedGalleryItems,
+  getPendingGalleryItems,
+  isAdminCodeValid,
+} from '@/src/lib/gallery-wall';
+import type { GalleryWallItem } from '@/src/lib/gallery-wall';
 
-export async function GET() {
-  try {
-    // Gallery folder path
-    const galleryDir = path.join(process.cwd(), 'public/images/gallery');
-    
-    // Read files in the folder
-    const files = fs.readdirSync(galleryDir);
-    
-    // Filter image files
-    const imageFiles = files
-      .filter(file => {
-        const ext = path.extname(file).toLowerCase();
-        return ['.jpg', '.jpeg', '.png', '.gif', '.webp'].includes(ext);
-      });
-    
-    // Order images based on config
-    const configImages = weddingConfig.gallery.images;
-    const orderedImages: string[] = [];
-    
-    // Only add files that exist, following config order
-    for (const configImagePath of configImages) {
-      const filename = path.basename(configImagePath);
-      if (imageFiles.includes(filename)) {
-        orderedImages.push(configImagePath);
-      }
-    }
-    
-    // Append images not in config (sorted by filename)
-    const remainingFiles = imageFiles
-      .filter(file => !configImages.some((configPath: string) => path.basename(configPath) === file))
-      .sort((a, b) => a.localeCompare(b))
-      .map(file => `/images/gallery/${file}`);
-    
-    const finalImages = [...orderedImages, ...remainingFiles];
-    
-    return NextResponse.json({ images: finalImages });
-  } catch (error) {
-    console.error('Gallery image load error:', error);
-    return NextResponse.json(
-      { 
-        error: 'An error occurred while loading gallery images.',
-        images: weddingConfig.gallery.images // Return config list on error
-      }, 
-      { status: 500 }
-    );
+export const runtime = 'nodejs';
+
+function parsePositiveInt(value: string | null, fallback: number): number {
+  if (!value) {
+    return fallback;
   }
-} 
+
+  const parsedValue = Number.parseInt(value, 10);
+  if (Number.isNaN(parsedValue) || parsedValue < 0) {
+    return fallback;
+  }
+
+  return parsedValue;
+}
+
+function paginateItems(items: GalleryWallItem[], cursor: number, limit: number) {
+  const start = Math.max(0, cursor);
+  const end = start + limit;
+  const pageItems = items.slice(start, end);
+
+  return {
+    items: pageItems,
+    hasMore: end < items.length,
+    nextCursor: end < items.length ? end : null,
+    total: items.length,
+  };
+}
+
+export async function GET(request: NextRequest) {
+  try {
+    const searchParams = request.nextUrl.searchParams;
+    const cursor = parsePositiveInt(searchParams.get('cursor'), 0);
+    const limit = Math.min(parsePositiveInt(searchParams.get('limit'), 9), 24);
+    const status = searchParams.get('status') || 'approved';
+    const adminCode = searchParams.get('adminCode');
+
+    let items: GalleryWallItem[] = [];
+
+    if (status === 'pending') {
+      if (!isAdminCodeValid(adminCode)) {
+        return NextResponse.json({ error: 'Invalid admin code.' }, { status: 401 });
+      }
+      items = await getPendingGalleryItems();
+    } else if (status === 'all') {
+      if (!isAdminCodeValid(adminCode)) {
+        return NextResponse.json({ error: 'Invalid admin code.' }, { status: 401 });
+      }
+      items = await getAllGalleryItems();
+    } else {
+      items = await getApprovedGalleryItems();
+    }
+
+    const paginatedData = paginateItems(items, cursor, limit);
+
+    return NextResponse.json({
+      ...paginatedData,
+      images: paginatedData.items.map(item => item.url),
+    });
+  } catch (error) {
+    console.error('Gallery fetch error:', error);
+    return NextResponse.json({ error: 'Failed to load gallery.' }, { status: 500 });
+  }
+}

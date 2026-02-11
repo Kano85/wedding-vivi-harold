@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { weddingConfig } from '../../config/wedding-config';
 import MapTilerLightMap from '../MapTilerLightMap';
+import type { SiteLanguage } from '../../lib/i18n';
 
 // Convert \n to <br /> line breaks
 const formatTextWithLineBreaks = (text: string) => {
@@ -17,9 +18,10 @@ const formatTextWithLineBreaks = (text: string) => {
 
 interface VenueSectionProps {
   bgColor?: 'white' | 'beige';
+  language: SiteLanguage;
 }
 
-const VenueSection = ({ bgColor = 'white' }: VenueSectionProps) => {
+const VenueSection = ({ bgColor = 'white', language }: VenueSectionProps) => {
   const [isClient, setIsClient] = useState(false);
   // Shuttle info expand/collapse state
   const [expandedTravel, setExpandedTravel] = useState<'local' | 'outside' | null>(null);
@@ -34,6 +36,39 @@ const VenueSection = ({ bgColor = 'white' }: VenueSectionProps) => {
   };
   
   const mapPopupHtml = `<strong>${weddingConfig.venue.name}</strong><br/>${weddingConfig.venue.address.replace(/\n/g, '<br/>')}`;
+  const t = language === 'es'
+    ? {
+        title: 'Lugar',
+        publicTransport: 'Transporte Publico',
+        subway: 'Tren',
+        bus: 'Bus',
+        parking: 'Parking',
+        subwayText: weddingConfig.venue.transportation.subway,
+        busText: weddingConfig.venue.transportation.bus,
+        parkingText: weddingConfig.venue.parking,
+        localTitle: weddingConfig.venue.travelInfoLocal?.title || '',
+        localDetails: weddingConfig.venue.travelInfoLocal?.details || '',
+        outsideTitle: weddingConfig.venue.travelInfoOutside?.title || '',
+        outsideDetails: weddingConfig.venue.travelInfoOutside?.details || '',
+      }
+    : {
+        title: 'Ort',
+        publicTransport: 'Oeffentliche Verkehrsmittel',
+        subway: 'Zug',
+        bus: 'Bus',
+        parking: 'Parken',
+        subwayText:
+          'Der Zug bringt euch nach Figueres. Wir organisieren einen Shuttle von Figueres. Weitere Details teilen wir naeher am Eventdatum.',
+        busText:
+          'Der Zug bringt euch nach Figueres. Wir organisieren einen Shuttle von Figueres. Weitere Details teilen wir naeher am Eventdatum.',
+        parkingText: 'Parkplaetze vor Ort verfuegbar.',
+        localTitle: 'Barcelona / Katalonien',
+        localDetails:
+          'Bitte nehmt den Zug nach Figueres. Wir planen einen Shuttle von Figueres zur Location. Weitere Informationen folgen naeher am Eventdatum.',
+        outsideTitle: 'Ausserhalb Kataloniens / Anreise per Flug',
+        outsideDetails:
+          'Wenn ihr von ausserhalb Kataloniens anreist, sind die naechsten Flughaefen Barcelona (BCN) und Girona (GRO). Von dort bitte mit dem Zug nach Figueres. Wir planen einen Shuttle von Figueres zur Location. Weitere Informationen folgen naeher am Eventdatum.',
+      };
 
   useEffect(() => {
     setIsClient(true);
@@ -42,14 +77,14 @@ const VenueSection = ({ bgColor = 'white' }: VenueSectionProps) => {
   if (!isClient) {
     return (
       <VenueSectionContainer $bgColor={bgColor}>
-        <SectionTitle>Venue</SectionTitle>
+        <SectionTitle>{t.title}</SectionTitle>
       </VenueSectionContainer>
     );
   }
   
   return (
     <VenueSectionContainer $bgColor={bgColor}>
-      <SectionTitle>Venue</SectionTitle>
+      <SectionTitle>{t.title}</SectionTitle>
       
       <VenueInfo>
         <VenueName>{weddingConfig.venue.name}</VenueName>
@@ -68,27 +103,27 @@ const VenueSection = ({ bgColor = 'white' }: VenueSectionProps) => {
       </MapWrapper>
       
       <TransportCard>
-        <CardTitle>Public Transportation</CardTitle>
+        <CardTitle>{t.publicTransport}</CardTitle>
         <TransportItem>
-          <TransportLabel>Subway</TransportLabel>
-          <TransportText>{weddingConfig.venue.transportation.subway}</TransportText>
+          <TransportLabel>{t.subway}</TransportLabel>
+          <TransportText>{language === 'es' ? weddingConfig.venue.transportation.subway : t.subwayText}</TransportText>
         </TransportItem>
         <TransportItem>
-          <TransportLabel>Bus</TransportLabel>
-          <TransportText>{weddingConfig.venue.transportation.bus}</TransportText>
+          <TransportLabel>{t.bus}</TransportLabel>
+          <TransportText>{language === 'es' ? weddingConfig.venue.transportation.bus : t.busText}</TransportText>
         </TransportItem>
       </TransportCard>
       
       <ParkingCard>
-        <CardTitle>Parking</CardTitle>
-        <TransportText>{weddingConfig.venue.parking}</TransportText>
+        <CardTitle>{t.parking}</CardTitle>
+        <TransportText>{language === 'es' ? weddingConfig.venue.parking : t.parkingText}</TransportText>
       </ParkingCard>
       
       {/* Travel info - local */}
       {weddingConfig.venue.travelInfoLocal && (
         <ShuttleCard>
           <ShuttleCardHeader onClick={() => toggleTravel('local')} $isExpanded={expandedTravel === 'local'}>
-            <CardTitle>{weddingConfig.venue.travelInfoLocal.title}</CardTitle>
+            <CardTitle>{language === 'es' ? weddingConfig.venue.travelInfoLocal.title : t.localTitle}</CardTitle>
             <ExpandIcon $isExpanded={expandedTravel === 'local'}>
               {expandedTravel === 'local' ? '−' : '+'}
             </ExpandIcon>
@@ -97,7 +132,11 @@ const VenueSection = ({ bgColor = 'white' }: VenueSectionProps) => {
           {expandedTravel === 'local' && (
             <ShuttleContent>
               <ShuttleInfo>
-                <ShuttleText>{formatTextWithLineBreaks(weddingConfig.venue.travelInfoLocal.details)}</ShuttleText>
+                <ShuttleText>
+                  {formatTextWithLineBreaks(
+                    language === 'es' ? weddingConfig.venue.travelInfoLocal.details : t.localDetails,
+                  )}
+                </ShuttleText>
               </ShuttleInfo>
             </ShuttleContent>
           )}
@@ -108,7 +147,7 @@ const VenueSection = ({ bgColor = 'white' }: VenueSectionProps) => {
       {weddingConfig.venue.travelInfoOutside && (
         <ShuttleCard>
           <ShuttleCardHeader onClick={() => toggleTravel('outside')} $isExpanded={expandedTravel === 'outside'}>
-            <CardTitle>{weddingConfig.venue.travelInfoOutside.title}</CardTitle>
+            <CardTitle>{language === 'es' ? weddingConfig.venue.travelInfoOutside.title : t.outsideTitle}</CardTitle>
             <ExpandIcon $isExpanded={expandedTravel === 'outside'}>
               {expandedTravel === 'outside' ? '−' : '+'}
             </ExpandIcon>
@@ -117,7 +156,11 @@ const VenueSection = ({ bgColor = 'white' }: VenueSectionProps) => {
           {expandedTravel === 'outside' && (
             <ShuttleContent>
               <ShuttleInfo>
-                <ShuttleText>{formatTextWithLineBreaks(weddingConfig.venue.travelInfoOutside.details)}</ShuttleText>
+                <ShuttleText>
+                  {formatTextWithLineBreaks(
+                    language === 'es' ? weddingConfig.venue.travelInfoOutside.details : t.outsideDetails,
+                  )}
+                </ShuttleText>
               </ShuttleInfo>
             </ShuttleContent>
           )}

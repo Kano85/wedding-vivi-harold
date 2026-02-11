@@ -41,3 +41,14 @@ export interface Venue {
   travelInfoLocal?: TravelInfo;
   travelInfoOutside?: TravelInfo;
 } 
+
+export type GalleryStatus = 'approved' | 'pending' | 'rejected';
+
+export interface GalleryWallItem {
+  id: string;
+  url: string;
+  createdAt: string;
+  status: GalleryStatus;
+  source: 'static' | 'upload';
+  guestName?: string;
+}

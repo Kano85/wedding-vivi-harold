@@ -1,8 +1,5 @@
-'use client';
-
 import { weddingConfig } from "../src/config/wedding-config";
 import StyledComponentsRegistry from "../src/lib/registry";
-import { GlobalStyle } from "../src/styles/globalStyles";
 import "./globals.css";
 import "maplibre-gl/dist/maplibre-gl.css";
 
@@ -27,8 +24,7 @@ export default function RootLayout({
       </head>
       <body>
         <StyledComponentsRegistry>
-          <GlobalStyle />
-        {children}
+          {children}
         </StyledComponentsRegistry>
       </body>
     </html>

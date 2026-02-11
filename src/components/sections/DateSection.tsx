@@ -3,12 +3,14 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { weddingConfig } from '../../config/wedding-config';
+import { formatWeddingDate, type SiteLanguage } from '../../lib/i18n';
 
 interface DateSectionProps {
   bgColor?: 'white' | 'beige';
+  language: SiteLanguage;
 }
 
-const DateSection = ({ bgColor = 'white' }: DateSectionProps) => {
+const DateSection = ({ bgColor = 'white', language }: DateSectionProps) => {
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
@@ -17,6 +19,17 @@ const DateSection = ({ bgColor = 'white' }: DateSectionProps) => {
   });
 
   const [isWeddingPassed, setIsWeddingPassed] = useState(false);
+
+  const monthNames =
+    language === 'es'
+      ? ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+      : ['Januar', 'Februar', 'Maerz', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+  const dayNames = language === 'es' ? ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'] : ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+  const sectionTitle = language === 'es' ? 'Fecha del Evento' : 'Veranstaltungsdatum';
+  const countdownTitle = language === 'es' ? 'Tiempo para la boda' : 'Zeit bis zur Hochzeit';
+  const countdownLabels = language === 'es'
+    ? { days: 'Dias', hours: 'Horas', minutes: 'Minutos', seconds: 'Segundos' }
+    : { days: 'Tage', hours: 'Stunden', minutes: 'Minuten', seconds: 'Sekunden' };
 
   // Calendar generation logic
   const generateCalendar = () => {
@@ -94,25 +107,12 @@ const DateSection = ({ bgColor = 'white' }: DateSectionProps) => {
 
   return (
     <DateSectionContainer $bgColor={bgColor}>
-      <SectionTitle>Event Date</SectionTitle>
+      <SectionTitle>{sectionTitle}</SectionTitle>
 
       <CalendarCard>
         <CalendarHeader>
           <span>
-            {[
-              'January',
-              'February',
-              'March',
-              'April',
-              'May',
-              'June',
-              'July',
-              'August',
-              'September',
-              'October',
-              'November',
-              'December',
-            ][weddingConfig.date.month - 1]} {weddingConfig.date.year}
+            {monthNames[weddingConfig.date.month - 1]} {weddingConfig.date.year}
           </span>
           <div>
             <button aria-label="Previous month">
@@ -125,13 +125,13 @@ const DateSection = ({ bgColor = 'white' }: DateSectionProps) => {
         </CalendarHeader>
 
         <CalendarGrid>
-          <DayName $isWeekend="sun">Sun</DayName>
-          <DayName>Mon</DayName>
-          <DayName>Tue</DayName>
-          <DayName>Wed</DayName>
-          <DayName>Thu</DayName>
-          <DayName>Fri</DayName>
-          <DayName $isWeekend="sat">Sat</DayName>
+          <DayName $isWeekend="sun">{dayNames[0]}</DayName>
+          <DayName>{dayNames[1]}</DayName>
+          <DayName>{dayNames[2]}</DayName>
+          <DayName>{dayNames[3]}</DayName>
+          <DayName>{dayNames[4]}</DayName>
+          <DayName>{dayNames[5]}</DayName>
+          <DayName $isWeekend="sat">{dayNames[6]}</DayName>
 
           {generateCalendar()}
         </CalendarGrid>
@@ -139,19 +139,19 @@ const DateSection = ({ bgColor = 'white' }: DateSectionProps) => {
 
       {!isWeddingPassed && (
         <CountdownContainer>
-          <CountdownTitle>Time until the wedding</CountdownTitle>
+          <CountdownTitle>{countdownTitle}</CountdownTitle>
 
           <CountdownWrapper>
             <CountdownItem>
               <CountdownValue>{timeLeft.days}</CountdownValue>
-              <CountdownLabel>Days</CountdownLabel>
+              <CountdownLabel>{countdownLabels.days}</CountdownLabel>
             </CountdownItem>
             <VerticalDivider />
             <CountdownItem>
               <CountdownValue>
                 {timeLeft.hours < 10 ? `0${timeLeft.hours}` : timeLeft.hours}
               </CountdownValue>
-              <CountdownLabel>Hours</CountdownLabel>
+              <CountdownLabel>{countdownLabels.hours}</CountdownLabel>
             </CountdownItem>
             <VerticalDivider />
             <CountdownItem>
@@ -160,7 +160,7 @@ const DateSection = ({ bgColor = 'white' }: DateSectionProps) => {
                   ? `0${timeLeft.minutes}`
                   : timeLeft.minutes}
               </CountdownValue>
-              <CountdownLabel>Minutes</CountdownLabel>
+              <CountdownLabel>{countdownLabels.minutes}</CountdownLabel>
             </CountdownItem>
             <VerticalDivider />
             <CountdownItem>
@@ -169,13 +169,13 @@ const DateSection = ({ bgColor = 'white' }: DateSectionProps) => {
                   ? `0${timeLeft.seconds}`
                   : timeLeft.seconds}
               </CountdownValue>
-              <CountdownLabel>Seconds</CountdownLabel>
+              <CountdownLabel>{countdownLabels.seconds}</CountdownLabel>
             </CountdownItem>
           </CountdownWrapper>
         </CountdownContainer>
       )}
 
-      <WeddingDate>{weddingConfig.main.date}</WeddingDate>
+      <WeddingDate>{formatWeddingDate(language, weddingConfig.date)}</WeddingDate>
     </DateSectionContainer>
   );
 };

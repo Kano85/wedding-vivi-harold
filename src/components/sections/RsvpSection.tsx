@@ -3,12 +3,14 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { weddingConfig } from '../../config/wedding-config';
+import type { SiteLanguage } from '../../lib/i18n';
 
 interface RsvpSectionProps {
   bgColor?: 'white' | 'beige';
+  language: SiteLanguage;
 }
 
-const RsvpSection = ({ bgColor = 'white' }: RsvpSectionProps) => {
+const RsvpSection = ({ bgColor = 'white', language }: RsvpSectionProps) => {
   const [formData, setFormData] = useState({
     name: '',
     isAttending: null as boolean | null,
@@ -24,6 +26,55 @@ const RsvpSection = ({ bgColor = 'white' }: RsvpSectionProps) => {
 
   // Meal option display setting
   const showMealOption = weddingConfig.rsvp?.showMealOption ?? true;
+  const t = language === 'es'
+    ? {
+        title: 'RSVP',
+        description: 'Por favor dinos si puedes acompanarnos en este dia especial.\nTu respuesta nos ayuda a prepararnos mejor.\nAgradecemos mucho tu confirmacion.',
+        name: 'Nombre',
+        namePlaceholder: 'Escribe tu nombre',
+        side: 'Lado',
+        groomSide: 'Lado del novio',
+        brideSide: 'Lado de la novia',
+        attendance: 'Asistencia',
+        attending: 'Asistire',
+        notAttending: 'No asistire',
+        guestCount: 'Numero de invitados',
+        meal: 'Comida',
+        withMeal: 'Con comida',
+        noMeal: 'Sin comida',
+        submit: 'Enviar RSVP',
+        submitting: 'Enviando...',
+        validationError: 'Ingresa tu nombre, asistencia y lado.',
+        mealError: 'Selecciona tu opcion de comida.',
+        submitSuccess: 'Tu RSVP fue enviado correctamente. Gracias!',
+        submitFailed: 'Hubo un error al enviar tu RSVP. Intentalo de nuevo.',
+        brideSidePayload: 'Lado de la novia',
+        groomSidePayload: 'Lado del novio',
+      }
+    : {
+        title: 'RSVP',
+        description: 'Bitte teile uns mit, ob du an unserem besonderen Tag dabei sein kannst.\nDeine Antwort hilft uns bei der Planung.\nVielen Dank fuer deine Rueckmeldung.',
+        name: 'Name',
+        namePlaceholder: 'Gib deinen Namen ein',
+        side: 'Seite',
+        groomSide: 'Seite des Braeutigams',
+        brideSide: 'Seite der Braut',
+        attendance: 'Teilnahme',
+        attending: 'Ich komme',
+        notAttending: 'Ich komme nicht',
+        guestCount: 'Anzahl Gaeste',
+        meal: 'Essen',
+        withMeal: 'Mit Essen',
+        noMeal: 'Ohne Essen',
+        submit: 'RSVP senden',
+        submitting: 'Wird gesendet...',
+        validationError: 'Bitte gib deinen Namen, Teilnahme und Seite an.',
+        mealError: 'Bitte waehle deine Essensoption.',
+        submitSuccess: 'Dein RSVP wurde erfolgreich gesendet. Danke!',
+        submitFailed: 'Beim Senden gab es einen Fehler. Bitte versuche es erneut.',
+        brideSidePayload: 'Seite der Braut',
+        groomSidePayload: 'Seite des Braeutigams',
+      };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -70,7 +121,7 @@ const RsvpSection = ({ bgColor = 'white' }: RsvpSectionProps) => {
     if (!formData.name || formData.isAttending === null || !formData.side) {
       setSubmitStatus({
         success: false,
-        message: 'Please enter your name, attendance, and which side you are on.',
+        message: t.validationError,
       });
       return;
     }
@@ -78,7 +129,7 @@ const RsvpSection = ({ bgColor = 'white' }: RsvpSectionProps) => {
     if (showMealOption && formData.isAttending && formData.hasMeal === null) {
       setSubmitStatus({
         success: false,
-        message: 'Please select your meal option.',
+        message: t.mealError,
       });
       return;
     }
@@ -97,7 +148,7 @@ const RsvpSection = ({ bgColor = 'white' }: RsvpSectionProps) => {
         },
         body: JSON.stringify({
           name: formData.name,
-          side: formData.side === 'BRIDE' ? 'Bride side' : 'Groom side',
+          side: formData.side === 'BRIDE' ? t.brideSidePayload : t.groomSidePayload,
           isAttending: formData.isAttending,
           guestCount: formData.isAttending ? formData.guestCount : 0,
           hasMeal: formData.isAttending ? formData.hasMeal : false,
@@ -108,7 +159,7 @@ const RsvpSection = ({ bgColor = 'white' }: RsvpSectionProps) => {
       if (response.ok) {
         setSubmitStatus({
           success: true,
-          message: 'Your RSVP was submitted successfully. Thank you!',
+          message: t.submitSuccess,
         });
         setFormData({
           name: '',
@@ -124,7 +175,7 @@ const RsvpSection = ({ bgColor = 'white' }: RsvpSectionProps) => {
       console.error('RSVP submission error:', error);
       setSubmitStatus({
         success: false,
-        message: 'There was an error submitting your RSVP. Please try again.',
+        message: t.submitFailed,
       });
     } finally {
       setIsSubmitting(false);
@@ -133,13 +184,9 @@ const RsvpSection = ({ bgColor = 'white' }: RsvpSectionProps) => {
 
   return (
     <RsvpSectionContainer $bgColor={bgColor}>
-      <SectionTitle>RSVP</SectionTitle>
+      <SectionTitle>{t.title}</SectionTitle>
       
-      <RsvpDescription>
-        Please let us know if you can join us on our special day.<br />
-        Your response helps us prepare with care.<br />
-        We truly appreciate your RSVP.
-      </RsvpDescription>
+      <RsvpDescription>{t.description}</RsvpDescription>
       
       {submitStatus && (
         <StatusMessage $success={submitStatus.success.toString()}>
@@ -149,55 +196,55 @@ const RsvpSection = ({ bgColor = 'white' }: RsvpSectionProps) => {
       
       <RsvpForm onSubmit={handleSubmit}>
         <FormGroup>
-          <Label htmlFor="name">Name</Label>
+          <Label htmlFor="name">{t.name}</Label>
           <Input
             type="text"
             id="name"
             name="name"
             value={formData.name}
             onChange={handleChange}
-            placeholder="Enter your name"
+            placeholder={t.namePlaceholder}
             required
           />
         </FormGroup>
         
         <FormRow>
           <FormColumn>
-            <Label as="p">Side</Label>
+            <Label as="p">{t.side}</Label>
             <AttendanceButtons>
               <AttendanceButton 
                 type="button"
                 $selected={formData.side === 'GROOM'}
                 onClick={() => handleSideChange('GROOM')}
               >
-                Groom side
+                {t.groomSide}
               </AttendanceButton>
               <AttendanceButton 
                 type="button"
                 $selected={formData.side === 'BRIDE'}
                 onClick={() => handleSideChange('BRIDE')}
               >
-                Bride side
+                {t.brideSide}
               </AttendanceButton>
             </AttendanceButtons>
           </FormColumn>
 
           <FormColumn>
-            <Label as="p">Attendance</Label>
+            <Label as="p">{t.attendance}</Label>
             <AttendanceButtons>
               <AttendanceButton 
                 type="button"
                 $selected={formData.isAttending === true}
                 onClick={() => handleAttendingChange(true)}
               >
-                Attending
+                {t.attending}
               </AttendanceButton>
               <AttendanceButton 
                 type="button"
                 $selected={formData.isAttending === false}
                 onClick={() => handleAttendingChange(false)}
               >
-                Not attending
+                {t.notAttending}
               </AttendanceButton>
             </AttendanceButtons>
           </FormColumn>
@@ -206,7 +253,7 @@ const RsvpSection = ({ bgColor = 'white' }: RsvpSectionProps) => {
         {formData.isAttending && (
           <FormRow>
             <FormColumn>
-              <Label htmlFor="guestCount">Guest count</Label>
+              <Label htmlFor="guestCount">{t.guestCount}</Label>
               <Select
                 id="guestCount"
                 name="guestCount"
@@ -223,21 +270,21 @@ const RsvpSection = ({ bgColor = 'white' }: RsvpSectionProps) => {
             
             {showMealOption && (
               <FormColumn>
-                <Label as="p">Meal</Label>
+                <Label as="p">{t.meal}</Label>
                 <AttendanceButtons>
                   <AttendanceButton 
                     type="button"
                     $selected={formData.hasMeal === true}
                     onClick={() => handleMealChange(true)}
                   >
-                    Having a meal
+                    {t.withMeal}
                   </AttendanceButton>
                   <AttendanceButton 
                     type="button"
                     $selected={formData.hasMeal === false}
                     onClick={() => handleMealChange(false)}
                   >
-                    No meal
+                    {t.noMeal}
                   </AttendanceButton>
                 </AttendanceButtons>
               </FormColumn>
@@ -246,7 +293,7 @@ const RsvpSection = ({ bgColor = 'white' }: RsvpSectionProps) => {
         )}
         
         <SubmitButton type="submit" disabled={isSubmitting}>
-          {isSubmitting ? 'Submitting...' : 'Send RSVP'}
+          {isSubmitting ? t.submitting : t.submit}
         </SubmitButton>
       </RsvpForm>
     </RsvpSectionContainer>
@@ -284,6 +331,7 @@ const RsvpDescription = styled.p`
   font-size: 0.9rem;
   color: var(--text-medium);
   line-height: 1.6;
+  white-space: pre-line;
 `;
 
 const StatusMessage = styled.div<{ $success: string }>`

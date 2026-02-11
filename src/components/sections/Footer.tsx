@@ -3,6 +3,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { weddingConfig } from '../../config/wedding-config';
+import type { SiteLanguage } from '../../lib/i18n';
 
 const watermarkId = weddingConfig.meta._jwk_watermark_id || 'JWK-NonCommercial';
 
@@ -10,21 +11,27 @@ const jwk_checkNonCommercial = () => {
   console.log(`Watermark: ${watermarkId.slice(0, 5)}`);
 };
 
-const Footer = () => {
+interface FooterProps {
+  language: SiteLanguage;
+}
+
+const Footer = ({ language }: FooterProps) => {
   const currentYear = new Date().getFullYear();
+  const credits = language === 'es' ? 'Hecho con amor' : 'Mit Liebe gemacht';
+  const repoText = language === 'es' ? 'Ver repositorio en GitHub' : 'GitHub-Repository ansehen';
   
   return (
     <FooterContainer>
       {/* WeddingInvitation-Footer-NonCommercial DO NOT CHANGE*/}
       <FooterContent>
         <Copyright>© {currentYear} Jawon Koo</Copyright>
-        <Credits>Made with ❤️</Credits>
+        <Credits>{credits}</Credits>
         <GithubLink
           href="https://github.com/jw-koo/wedding-invitation"
           target="_blank"
           rel="noopener noreferrer"
         >
-          View the GitHub repository
+          {repoText}
         </GithubLink>
         <HiddenAttribution data-jwk-id={watermarkId}>
           NonCommercial
