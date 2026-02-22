@@ -11,6 +11,7 @@ interface DateSectionProps {
 }
 
 const DateSection = ({ bgColor = 'white', language }: DateSectionProps) => {
+  const [hasMounted, setHasMounted] = useState(false);
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
@@ -77,6 +78,8 @@ const DateSection = ({ bgColor = 'white', language }: DateSectionProps) => {
   };
 
   useEffect(() => {
+    setHasMounted(true);
+
     const calculateTimeLeft = () => {
       const weddingDate = new Date(
         weddingConfig.date.year,
@@ -108,6 +111,10 @@ const DateSection = ({ bgColor = 'white', language }: DateSectionProps) => {
 
     return () => clearInterval(timer);
   }, []);
+
+  if (!hasMounted) {
+    return null;
+  }
 
   return (
     <DateSectionContainer $bgColor={bgColor}>

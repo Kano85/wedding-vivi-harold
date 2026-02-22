@@ -30,6 +30,8 @@ const VenueSection = ({ bgColor = 'white', language }: VenueSectionProps) => {
         title: 'Lugar',
         arrival: 'Llegada',
         publicTransport: 'Transporte público',
+        publicTransportText:
+          'Por favor, llegad hasta Figueres (tren o bus).\nDesde allí organizamos un shuttle hasta la finca.\nMás información sobre el shuttle cerca de la fecha del evento.',
         subway: 'Tren',
         bus: 'Bus',
         localTitle: 'Llegada desde Barcelona / Catalunya',
@@ -38,20 +40,20 @@ const VenueSection = ({ bgColor = 'white', language }: VenueSectionProps) => {
         airportBarcelona: 'Barcelona (BCN)',
         airportGirona: 'Girona (GRO)',
         parking: 'Parking',
-        subwayText:
-          'Por favor, tomad el tren hasta Figueres.\nOrganizamos un shuttle desde Figueres hasta la finca.\nMás información cerca de la fecha del evento.',
-        busText:
-          'Por favor, llegad también hasta Figueres.\nDesde allí organizamos un shuttle hasta la finca.\nMás detalles cerca de la fecha del evento.',
+        subwayText: '',
+        busText: '',
         localDetails:
-          'Por favor, tomad el tren hasta Figueres.\nEstá previsto un shuttle de Figueres hasta la finca.\nMás información cerca de la fecha del evento.',
+          'Recomendamos llegar en tren hasta Figueres.\nHay un shuttle organizado hasta la finca.\nCompartiremos los detalles con tiempo antes del evento.',
         outsideDetails:
-          'Desde allí, por favor, id en tren hasta Figueres.\nOrganizamos un shuttle desde Figueres hasta la finca.\nMás información cerca de la fecha del evento.',
-        parkingText: 'Hay aparcamiento disponible en la finca.',
+          'Desde allí recomendamos continuar en tren hasta Figueres.\nDesde Figueres habrá un shuttle hasta la finca.\nMás información cerca de la fecha del evento.',
+        parkingText: 'Hay aparcamiento disponible directamente en la finca.',
       }
     : {
         title: 'Ort',
         arrival: 'Anreise',
         publicTransport: 'Oeffentliche Verkehrsmittel',
+        publicTransportText:
+          'Bitte reist bis Figueres an (Zug oder Bus).\nVon dort organisieren wir einen Shuttle zur Location.\nWeitere Informationen zum Shuttle folgen näher am Eventdatum.',
         subway: 'Zug',
         bus: 'Bus',
         localTitle: 'Anreise innerhalb von Barcelona / Katalonien',
@@ -60,15 +62,13 @@ const VenueSection = ({ bgColor = 'white', language }: VenueSectionProps) => {
         airportBarcelona: 'Barcelona (BCN)',
         airportGirona: 'Girona (GRO)',
         parking: 'Parken',
-        subwayText:
-          'Bitte nehmt den Zug nach Figueres.\nWir organisieren einen Shuttle von Figueres zur Location.\nWeitere Informationen teilen wir näher am Eventdatum.',
-        busText:
-          'Bitte reist ebenfalls bis Figueres an.\nVon dort organisieren wir einen Shuttle zur Location.\nWeitere Details folgen näher am Eventdatum.',
+        subwayText: '',
+        busText: '',
         localDetails:
-          'Bitte nehmt den Zug nach Figueres.\nEin Shuttle von Figueres zur Location ist geplant.\nWeitere Informationen folgen näher am Eventdatum.',
+          'Wir empfehlen die Anreise mit dem Zug bis Figueres.\nEin Shuttle zur Location ist organisiert.\nDetails teilen wir rechtzeitig vor dem Event mit.',
         outsideDetails:
-          'Von dort bitte mit dem Zug nach Figueres fahren.\nWir organisieren einen Shuttle von Figueres zur Location.\nWeitere Informationen teilen wir näher am Eventdatum.',
-        parkingText: 'Parkplätze sind vor Ort verfügbar.',
+          'Von dort empfehlen wir die Weiterreise mit dem Zug bis Figueres.\nAb Figueres steht ein Shuttle zur Location bereit.\nWeitere Informationen folgen näher am Eventdatum.',
+        parkingText: 'Parkplätze sind direkt vor Ort verfügbar.',
       };
 
   useEffect(() => {
@@ -113,14 +113,7 @@ const VenueSection = ({ bgColor = 'white', language }: VenueSectionProps) => {
       <TransportCard>
         <CardTitle>{t.arrival}</CardTitle>
         <SubsectionTitle>{t.publicTransport}</SubsectionTitle>
-        <TransportItem>
-          <TransportLabel>{t.subway}</TransportLabel>
-          <TransportText>{t.subwayText}</TransportText>
-        </TransportItem>
-        <TransportItem>
-          <TransportLabel>{t.bus}</TransportLabel>
-          <TransportText>{t.busText}</TransportText>
-        </TransportItem>
+        <TransportText>{t.publicTransportText}</TransportText>
       </TransportCard>
 
       <Card>
