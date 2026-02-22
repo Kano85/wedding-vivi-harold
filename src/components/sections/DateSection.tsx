@@ -26,6 +26,10 @@ const DateSection = ({ bgColor = 'white', language }: DateSectionProps) => {
       : ['Januar', 'Februar', 'Maerz', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
   const dayNames = language === 'es' ? ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'] : ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
   const sectionTitle = language === 'es' ? 'Fecha del Evento' : 'Veranstaltungsdatum';
+  const arrivalInfo =
+    language === 'es'
+      ? 'Si llegas el sábado, puedes venir durante el día.\nPodéis llegar cuando queráis y disfrutar del entorno con calma antes de que empiece la celebración.'
+      : 'Für alle, die bereits am Samstag anreisen: Ihr könnt tagsüber jederzeit kommen und die Umgebung in Ruhe genießen, bevor die Feier beginnt.';
   const countdownTitle = language === 'es' ? 'Tiempo para la boda' : 'Zeit bis zur Hochzeit';
   const countdownLabels = language === 'es'
     ? { days: 'Dias', hours: 'Horas', minutes: 'Minutos', seconds: 'Segundos' }
@@ -108,6 +112,8 @@ const DateSection = ({ bgColor = 'white', language }: DateSectionProps) => {
   return (
     <DateSectionContainer $bgColor={bgColor}>
       <SectionTitle>{sectionTitle}</SectionTitle>
+      <HeaderDate>{formatWeddingDate(language, weddingConfig.date)}</HeaderDate>
+      <ArrivalInfo>{arrivalInfo}</ArrivalInfo>
 
       <CalendarCard>
         <CalendarHeader>
@@ -175,7 +181,6 @@ const DateSection = ({ bgColor = 'white', language }: DateSectionProps) => {
         </CountdownContainer>
       )}
 
-      <WeddingDate>{formatWeddingDate(language, weddingConfig.date)}</WeddingDate>
     </DateSectionContainer>
   );
 };
@@ -372,9 +377,17 @@ const VerticalDivider = styled.div`
   }
 `;
 
-const WeddingDate = styled.p`
-  font-size: 1.25rem;
-  margin-top: 2rem;
+const HeaderDate = styled.p`
+  font-size: 1.15rem;
+  margin: -0.5rem 0 0.8rem 0;
+`;
+
+const ArrivalInfo = styled.p`
+  white-space: pre-line;
+  line-height: 1.7;
+  max-width: 36rem;
+  margin: 0 auto 2rem auto;
+  font-size: 0.97rem;
 `;
 
 export default DateSection;

@@ -23,51 +23,52 @@ interface VenueSectionProps {
 
 const VenueSection = ({ bgColor = 'white', language }: VenueSectionProps) => {
   const [isClient, setIsClient] = useState(false);
-  // Shuttle info expand/collapse state
-  const [expandedTravel, setExpandedTravel] = useState<'local' | 'outside' | null>(null);
-  
-  // Toggle shuttle info
-  const toggleTravel = (section: 'local' | 'outside') => {
-    if (expandedTravel === section) {
-      setExpandedTravel(null);
-    } else {
-      setExpandedTravel(section);
-    }
-  };
-  
+
   const mapPopupHtml = `<strong>${weddingConfig.venue.name}</strong><br/>${weddingConfig.venue.address.replace(/\n/g, '<br/>')}`;
   const t = language === 'es'
     ? {
         title: 'Lugar',
-        publicTransport: 'Transporte Publico',
+        arrival: 'Llegada',
+        publicTransport: 'Transporte público',
         subway: 'Tren',
         bus: 'Bus',
+        localTitle: 'Llegada desde Barcelona / Catalunya',
+        outsideTitle: 'Llegada desde fuera de Catalunya',
+        nearestAirports: 'Los aeropuertos más cercanos son:',
+        airportBarcelona: 'Barcelona (BCN)',
+        airportGirona: 'Girona (GRO)',
         parking: 'Parking',
-        subwayText: weddingConfig.venue.transportation.subway,
-        busText: weddingConfig.venue.transportation.bus,
-        parkingText: weddingConfig.venue.parking,
-        localTitle: weddingConfig.venue.travelInfoLocal?.title || '',
-        localDetails: weddingConfig.venue.travelInfoLocal?.details || '',
-        outsideTitle: weddingConfig.venue.travelInfoOutside?.title || '',
-        outsideDetails: weddingConfig.venue.travelInfoOutside?.details || '',
+        subwayText:
+          'Por favor, tomad el tren hasta Figueres.\nOrganizamos un shuttle desde Figueres hasta la finca.\nMás información cerca de la fecha del evento.',
+        busText:
+          'Por favor, llegad también hasta Figueres.\nDesde allí organizamos un shuttle hasta la finca.\nMás detalles cerca de la fecha del evento.',
+        localDetails:
+          'Por favor, tomad el tren hasta Figueres.\nEstá previsto un shuttle de Figueres hasta la finca.\nMás información cerca de la fecha del evento.',
+        outsideDetails:
+          'Desde allí, por favor, id en tren hasta Figueres.\nOrganizamos un shuttle desde Figueres hasta la finca.\nMás información cerca de la fecha del evento.',
+        parkingText: 'Hay aparcamiento disponible en la finca.',
       }
     : {
         title: 'Ort',
+        arrival: 'Anreise',
         publicTransport: 'Oeffentliche Verkehrsmittel',
         subway: 'Zug',
         bus: 'Bus',
+        localTitle: 'Anreise innerhalb von Barcelona / Katalonien',
+        outsideTitle: 'Anreise von außerhalb Kataloniens',
+        nearestAirports: 'Die nächstgelegenen Flughäfen sind:',
+        airportBarcelona: 'Barcelona (BCN)',
+        airportGirona: 'Girona (GRO)',
         parking: 'Parken',
         subwayText:
-          'Der Zug bringt euch nach Figueres. Wir organisieren einen Shuttle von Figueres. Weitere Details teilen wir naeher am Eventdatum.',
+          'Bitte nehmt den Zug nach Figueres.\nWir organisieren einen Shuttle von Figueres zur Location.\nWeitere Informationen teilen wir näher am Eventdatum.',
         busText:
-          'Der Zug bringt euch nach Figueres. Wir organisieren einen Shuttle von Figueres. Weitere Details teilen wir naeher am Eventdatum.',
-        parkingText: 'Parkplaetze vor Ort verfuegbar.',
-        localTitle: 'Barcelona / Katalonien',
+          'Bitte reist ebenfalls bis Figueres an.\nVon dort organisieren wir einen Shuttle zur Location.\nWeitere Details folgen näher am Eventdatum.',
         localDetails:
-          'Bitte nehmt den Zug nach Figueres. Wir planen einen Shuttle von Figueres zur Location. Weitere Informationen folgen naeher am Eventdatum.',
-        outsideTitle: 'Ausserhalb Kataloniens / Anreise per Flug',
+          'Bitte nehmt den Zug nach Figueres.\nEin Shuttle von Figueres zur Location ist geplant.\nWeitere Informationen folgen näher am Eventdatum.',
         outsideDetails:
-          'Wenn ihr von ausserhalb Kataloniens anreist, sind die naechsten Flughaefen Barcelona (BCN) und Girona (GRO). Von dort bitte mit dem Zug nach Figueres. Wir planen einen Shuttle von Figueres zur Location. Weitere Informationen folgen naeher am Eventdatum.',
+          'Von dort bitte mit dem Zug nach Figueres fahren.\nWir organisieren einen Shuttle von Figueres zur Location.\nWeitere Informationen teilen wir näher am Eventdatum.',
+        parkingText: 'Parkplätze sind vor Ort verfügbar.',
       };
 
   useEffect(() => {
@@ -89,6 +90,13 @@ const VenueSection = ({ bgColor = 'white', language }: VenueSectionProps) => {
       <VenueInfo>
         <VenueName>{weddingConfig.venue.name}</VenueName>
         <VenueAddress>{formatTextWithLineBreaks(weddingConfig.venue.address)}</VenueAddress>
+        <VenueWebsite
+          href="https://lafarinerasantlluis.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          lafarinerasantlluis.com
+        </VenueWebsite>
         <VenueTel href={`tel:${weddingConfig.venue.tel}`}>{weddingConfig.venue.tel}</VenueTel>
       </VenueInfo>
       
@@ -103,69 +111,37 @@ const VenueSection = ({ bgColor = 'white', language }: VenueSectionProps) => {
       </MapWrapper>
       
       <TransportCard>
-        <CardTitle>{t.publicTransport}</CardTitle>
+        <CardTitle>{t.arrival}</CardTitle>
+        <SubsectionTitle>{t.publicTransport}</SubsectionTitle>
         <TransportItem>
           <TransportLabel>{t.subway}</TransportLabel>
-          <TransportText>{language === 'es' ? weddingConfig.venue.transportation.subway : t.subwayText}</TransportText>
+          <TransportText>{t.subwayText}</TransportText>
         </TransportItem>
         <TransportItem>
           <TransportLabel>{t.bus}</TransportLabel>
-          <TransportText>{language === 'es' ? weddingConfig.venue.transportation.bus : t.busText}</TransportText>
+          <TransportText>{t.busText}</TransportText>
         </TransportItem>
       </TransportCard>
-      
+
+      <Card>
+        <CardTitle>{t.localTitle}</CardTitle>
+        <TransportText>{t.localDetails}</TransportText>
+      </Card>
+
+      <Card>
+        <CardTitle>{t.outsideTitle}</CardTitle>
+        <TransportText>{t.nearestAirports}</TransportText>
+        <AirportList>
+          <AirportItem>{t.airportBarcelona}</AirportItem>
+          <AirportItem>{t.airportGirona}</AirportItem>
+        </AirportList>
+        <TransportText>{t.outsideDetails}</TransportText>
+      </Card>
+
       <ParkingCard>
         <CardTitle>{t.parking}</CardTitle>
-        <TransportText>{language === 'es' ? weddingConfig.venue.parking : t.parkingText}</TransportText>
+        <TransportText>{t.parkingText}</TransportText>
       </ParkingCard>
-      
-      {/* Travel info - local */}
-      {weddingConfig.venue.travelInfoLocal && (
-        <ShuttleCard>
-          <ShuttleCardHeader onClick={() => toggleTravel('local')} $isExpanded={expandedTravel === 'local'}>
-            <CardTitle>{language === 'es' ? weddingConfig.venue.travelInfoLocal.title : t.localTitle}</CardTitle>
-            <ExpandIcon $isExpanded={expandedTravel === 'local'}>
-              {expandedTravel === 'local' ? '−' : '+'}
-            </ExpandIcon>
-          </ShuttleCardHeader>
-
-          {expandedTravel === 'local' && (
-            <ShuttleContent>
-              <ShuttleInfo>
-                <ShuttleText>
-                  {formatTextWithLineBreaks(
-                    language === 'es' ? weddingConfig.venue.travelInfoLocal.details : t.localDetails,
-                  )}
-                </ShuttleText>
-              </ShuttleInfo>
-            </ShuttleContent>
-          )}
-        </ShuttleCard>
-      )}
-
-      {/* Travel info - outside Catalunya */}
-      {weddingConfig.venue.travelInfoOutside && (
-        <ShuttleCard>
-          <ShuttleCardHeader onClick={() => toggleTravel('outside')} $isExpanded={expandedTravel === 'outside'}>
-            <CardTitle>{language === 'es' ? weddingConfig.venue.travelInfoOutside.title : t.outsideTitle}</CardTitle>
-            <ExpandIcon $isExpanded={expandedTravel === 'outside'}>
-              {expandedTravel === 'outside' ? '−' : '+'}
-            </ExpandIcon>
-          </ShuttleCardHeader>
-
-          {expandedTravel === 'outside' && (
-            <ShuttleContent>
-              <ShuttleInfo>
-                <ShuttleText>
-                  {formatTextWithLineBreaks(
-                    language === 'es' ? weddingConfig.venue.travelInfoOutside.details : t.outsideDetails,
-                  )}
-                </ShuttleText>
-              </ShuttleInfo>
-            </ShuttleContent>
-          )}
-        </ShuttleCard>
-      )}
     </VenueSectionContainer>
   );
 };
@@ -210,7 +186,22 @@ const VenueAddress = styled.p`
   margin-bottom: 0.5rem;
 `;
 
+const VenueWebsite = styled.a`
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #8b5e3c;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  font-weight: 600;
+
+  &:hover {
+    color: #6f4629;
+  }
+`;
+
 const VenueTel = styled.a`
+  display: block;
   color: var(--secondary-color);
   text-decoration: none;
 `;
@@ -239,15 +230,17 @@ const Card = styled.div`
 
 const TransportCard = styled(Card)``;
 const ParkingCard = styled(Card)``;
-const ShuttleCard = styled(Card)`
-  padding: 0;
-  overflow: hidden;
-`;
 
 const CardTitle = styled.h4`
   font-weight: 500;
   margin-bottom: 1rem;
   font-size: 1rem;
+`;
+
+const SubsectionTitle = styled.h5`
+  font-weight: 500;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
 `;
 
 const TransportItem = styled.div`
@@ -265,50 +258,14 @@ const TransportText = styled.p`
   white-space: pre-line;
 `;
 
-const ShuttleInfo = styled.div`
-  margin-bottom: 1rem;
-  
-  &:last-child {
-    margin-bottom: 0;
-  }
+const AirportList = styled.div`
+  margin: 0.5rem 0 1rem 0;
 `;
 
-const ShuttleLabel = styled.p`
-  font-weight: 500;
-  font-size: 0.875rem;
-`;
-
-const ShuttleText = styled.p`
+const AirportItem = styled.p`
   font-size: 0.875rem;
   color: var(--text-medium);
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-`;
-
-const ShuttleCardHeader = styled.div<{ $isExpanded: boolean }>`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.5rem;
-  cursor: pointer;
-  border-bottom: ${props => props.$isExpanded ? '1px solid #eee' : 'none'};
-  
-  h4 {
-    margin: 0;
-  }
-`;
-
-const ExpandIcon = styled.span<{ $isExpanded: boolean }>`
-  font-size: 1.5rem;
-  line-height: 1;
-  color: var(--secondary-color);
-  transition: transform 0.3s ease;
-  transform: ${props => props.$isExpanded ? 'rotate(0deg)' : 'rotate(0deg)'};
-`;
-
-const ShuttleContent = styled.div`
-  padding: 1rem 1.5rem 1.5rem;
+  margin-bottom: 0.25rem;
 `;
 
 export default VenueSection; 

@@ -4,7 +4,7 @@ import React from 'react';
 import styled from 'styled-components';
 import Image from 'next/image';
 import { weddingConfig } from '../../config/wedding-config';
-import { formatWeddingDate, type SiteLanguage } from '../../lib/i18n';
+import { type SiteLanguage } from '../../lib/i18n';
 
 const watermarkId = weddingConfig.meta._jwk_watermark_id || 'JWK-NonCommercial';
 
@@ -14,7 +14,7 @@ interface MainSectionProps {
 
 const MainSection = ({ language }: MainSectionProps) => {
   const title = language === 'es' ? 'Invitacion de Boda' : 'Hochzeitseinladung';
-  const dateText = formatWeddingDate(language, weddingConfig.date);
+  const subtitleText = language === 'es' ? 'Vivian y Harold' : 'Vivian und Harold';
   const imageAlt = language === 'es' ? 'Imagen de fondo de boda' : 'Hochzeits-Hintergrundbild';
 
   return (
@@ -34,7 +34,7 @@ const MainSection = ({ language }: MainSectionProps) => {
       <Overlay />
       <MainContent>
         <MainTitle>{title}</MainTitle>
-        <DateText>{dateText}</DateText>
+        <DateText>{subtitleText}</DateText>
         <VenueText>{weddingConfig.main.venue}</VenueText>
         {}
         <HiddenWatermark aria-hidden="true">{watermarkId}</HiddenWatermark>
