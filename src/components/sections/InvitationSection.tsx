@@ -17,7 +17,7 @@ const InvitationSection = ({ bgColor = 'white', language }: InvitationSectionPro
   const dressCodeTitle = language === 'es' ? 'Dresscode' : 'Dresscode';
   const dressCodeText =
     language === 'es'
-      ? 'Boda de tarde al aire libre, fuera de la finca.\nVen arreglado, fresco y cómodo.\nLa corbata es opcional.\n\nY, sobre todo, ven con ganas de disfrutar, vivir una tarde preciosa y llevarte una experiencia especial.'
+      ? 'Boda de tarde al aire libre.\nVen arreglado, fresco y cómodo.\nLa corbata es opcional.\n\nY, sobre todo, ven con ganas de disfrutar, vivir una tarde preciosa y llevarte una experiencia especial.'
       : 'Abend-Hochzeit im Freien.\nKomm festlich gekleidet, aber locker und bequem.\nEine Krawatte ist optional.\n\nUnd vor allem: Komm mit Lust zu feiern, einen wunderschönen Nachmittag zu erleben und einen ganz besonderen Moment mit nach Hause zu nehmen.';
 
   return (
