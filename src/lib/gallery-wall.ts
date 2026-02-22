@@ -64,10 +64,24 @@ export async function ensureGalleryWallStorage(): Promise<void> {
 }
 
 export async function readUploadedGalleryItems(): Promise<StoredGalleryItem[]> {
-  await ensureGalleryWallStorage();
+  let parsedData: unknown;
+  try {
+    const fileContent = await fs.readFile(DATA_FILE, 'utf8');
+    parsedData = JSON.parse(fileContent) as unknown;
+  } catch (error) {
+    const code =
+      typeof error === 'object' && error !== null && 'code' in error
+        ? String((error as { code?: unknown }).code)
+        : '';
 
-  const fileContent = await fs.readFile(DATA_FILE, 'utf8');
-  const parsedData = JSON.parse(fileContent) as unknown;
+    // In serverless production (e.g. Vercel), writable local FS paths are not guaranteed.
+    // For read paths, fail open so static gallery images can still load.
+    if (code === 'ENOENT' || code === 'EROFS' || code === 'EPERM') {
+      return [];
+    }
+
+    throw error;
+  }
 
   if (!Array.isArray(parsedData)) {
     return [];
