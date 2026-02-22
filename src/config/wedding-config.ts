@@ -39,9 +39,9 @@ export const weddingConfig = {
     year: 2026,
     month: 6,
     day: 6,
-    hour: 15,
+    hour: 17,
     minute: 0,
-    displayDate: '2026.06.06 SAT 15:00',
+    displayDate: '2026.06.06 SAT 17:00',
   },
 
   // Venue info
@@ -122,6 +122,7 @@ export const weddingConfig = {
 
   // Bank account info
   account: {
+    enabled: false, // Show gift accounts section
     groom: {
       bank: 'Bank Name',
       number: '123-456-789012',

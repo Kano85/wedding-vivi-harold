@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
-import InvitationSection from '../src/components/sections/InvitationSection';
 import DateSection from '../src/components/sections/DateSection';
 import VenueSection from '../src/components/sections/VenueSection';
 import MusicSection from '../src/components/sections/MusicSection';
@@ -13,6 +12,10 @@ import { weddingConfig } from '../src/config/wedding-config';
 import { LANGUAGE_STORAGE_KEY, type SiteLanguage } from '../src/lib/i18n';
 
 const MainSection = dynamic(() => import('../src/components/sections/MainSection'), {
+  ssr: false,
+});
+
+const InvitationSection = dynamic(() => import('../src/components/sections/InvitationSection'), {
   ssr: false,
 });
 
@@ -41,6 +44,7 @@ export default function Home() {
   // Gallery position setting
   const galleryPosition = weddingConfig.gallery.position || 'middle';
   const showRsvp = weddingConfig.rsvp?.enabled ?? true;
+  const showAccount = weddingConfig.account?.enabled ?? true;
 
   // Calculate the render order to assign alternating section colors
   const sectionColorMap = useMemo(() => {
@@ -60,7 +64,9 @@ export default function Home() {
       sections.push('rsvp'); // RsvpSection
     }
     
-    sections.push('account'); // AccountSection
+    if (showAccount) {
+      sections.push('account'); // AccountSection
+    }
     
     if (galleryPosition === 'bottom') {
       sections.push('gallery-bottom'); // GallerySection (bottom)
@@ -73,7 +79,7 @@ export default function Home() {
     });
     
     return colorMap;
-  }, [galleryPosition, showRsvp]);
+  }, [galleryPosition, showRsvp, showAccount]);
 
   return (
     <main>
@@ -139,7 +145,7 @@ export default function Home() {
       <MusicSection bgColor={sectionColorMap['music']} language={language} />
       {galleryPosition === 'middle' && <GallerySection bgColor={sectionColorMap['gallery-middle']} language={language} />}
       {showRsvp && <RsvpSection bgColor={sectionColorMap['rsvp']} language={language} />}
-      <AccountSection bgColor={sectionColorMap['account']} language={language} />
+      {showAccount && <AccountSection bgColor={sectionColorMap['account']} language={language} />}
       {galleryPosition === 'bottom' && <GallerySection bgColor={sectionColorMap['gallery-bottom']} language={language} />}
       <Footer language={language} />
     </main>

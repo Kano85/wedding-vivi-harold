@@ -62,13 +62,25 @@ const MainSectionContainer = styled.section`
   overflow: hidden;
   background: #f8f6f2;
 
-  @media (min-width: 768px) and (min-height: 780px) {
+  @supports (height: 100dvh) {
+    height: 100dvh;
+    min-height: 100dvh;
+  }
+
+  @media (min-width: 768px) {
     aspect-ratio: 9 / 16;
+    width: min(100vw, calc(100vh * 9 / 16));
     max-width: calc(100vh * 9 / 16);
-    width: auto;
     margin: 0 auto;
     border-radius: 24px; /* Optional: rounded corners */
     box-shadow: 0 0 32px rgba(0, 0, 0, 0.08); /* Optional: shadow */
+  }
+
+  @supports (height: 100dvh) {
+    @media (min-width: 768px) {
+      width: min(100vw, calc(100dvh * 9 / 16));
+      max-width: calc(100dvh * 9 / 16);
+    }
   }
 `;
 

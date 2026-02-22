@@ -16,23 +16,10 @@ interface FooterProps {
 }
 
 const Footer = ({ language }: FooterProps) => {
-  const currentYear = new Date().getFullYear();
-  const credits = language === 'es' ? 'Hecho con amor' : 'Mit Liebe gemacht';
-  const repoText = language === 'es' ? 'Ver repositorio en GitHub' : 'GitHub-Repository ansehen';
-  
   return (
     <FooterContainer>
       {/* WeddingInvitation-Footer-NonCommercial DO NOT CHANGE*/}
       <FooterContent>
-        <Copyright>© {currentYear} Jawon Koo</Copyright>
-        <Credits>{credits}</Credits>
-        <GithubLink
-          href="https://github.com/jw-koo/wedding-invitation"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {repoText}
-        </GithubLink>
         <HiddenAttribution data-jwk-id={watermarkId}>
           NonCommercial
         </HiddenAttribution>
@@ -49,21 +36,10 @@ const FooterContainer = styled.footer`
 
 const FooterContent = styled.div`
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
+  justify-content: center;
   max-width: 36rem;
   margin: 0 auto;
-`;
-
-const Copyright = styled.p`
-  font-size: 0.875rem;
-  color: var(--text-medium);
-`;
-
-const Credits = styled.p`
-  font-size: 0.75rem;
-  color: var(--text-light);
+  min-height: 1px;
 `;
 
 const HiddenAttribution = styled.div`
@@ -76,17 +52,6 @@ const HiddenAttribution = styled.div`
   white-space: nowrap;
   user-select: none;
   pointer-events: none;
-`;
-
-const GithubLink = styled.a`
-  font-size: 0.75rem;
-  color: #888;
-  text-decoration: underline;
-  margin-top: 0.25rem;
-  transition: color 0.2s;
-  &:hover {
-    color: #222;
-  }
 `;
 
 export default Footer; 
