@@ -28,14 +28,10 @@ const VenueSection = ({ bgColor = 'white', language }: VenueSectionProps) => {
   const t = language === 'es'
     ? {
         title: 'Lugar',
-        arrival: 'Llegada',
-        publicTransport: 'Transporte público',
-        publicTransportText:
-          'Por favor, llegad hasta Figueres (tren o bus).\nDesde allí organizamos un shuttle hasta la finca.\nMás información sobre el shuttle cerca de la fecha del evento.',
         subway: 'Tren',
         bus: 'Bus',
-        localTitle: 'Llegada desde Barcelona / Catalunya',
-        outsideTitle: 'Llegada desde fuera de Catalunya',
+        localTitle: 'Llegada desde Barcelona / Cataluña',
+        outsideTitle: 'Llegada desde fuera de Cataluña',
         nearestAirports: 'Los aeropuertos más cercanos son:',
         airportBarcelona: 'Barcelona (BCN)',
         airportGirona: 'Girona (GRO)',
@@ -43,20 +39,16 @@ const VenueSection = ({ bgColor = 'white', language }: VenueSectionProps) => {
         subwayText: '',
         busText: '',
         localDetails:
-          'Recomendamos llegar en tren hasta Figueres.\nHay un shuttle organizado hasta la finca.\nCompartiremos los detalles con tiempo antes del evento.',
+          'Recomendamos llegar en tren hasta Figueres.\nOs recogemos en la estación de Figueres (cercanías) o Figueres-Vilafant (larga distancia).\nCompartiremos los detalles con tiempo antes del evento.',
         outsideDetails:
-          'Desde allí recomendamos continuar en tren hasta Figueres.\nDesde Figueres habrá un shuttle hasta la finca.\nMás información cerca de la fecha del evento.',
+          'Desde allí recomendamos continuar en tren hasta Figueres.\nOs recogemos en la estación de Figueres (cercanías) o Figueres-Vilafant (larga distancia).\nMás información cerca de la fecha del evento.',
         parkingText: 'Hay aparcamiento disponible directamente en la finca.',
       }
     : {
         title: 'Ort',
-        arrival: 'Anreise',
-        publicTransport: 'Oeffentliche Verkehrsmittel',
-        publicTransportText:
-          'Bitte reist bis Figueres an (Zug oder Bus).\nVon dort organisieren wir einen Shuttle zur Location.\nWeitere Informationen zum Shuttle folgen näher am Eventdatum.',
         subway: 'Zug',
         bus: 'Bus',
-        localTitle: 'Anreise innerhalb von Barcelona / Katalonien',
+        localTitle: 'Anreise aus Barcelona',
         outsideTitle: 'Anreise von außerhalb Kataloniens',
         nearestAirports: 'Die nächstgelegenen Flughäfen sind:',
         airportBarcelona: 'Barcelona (BCN)',
@@ -65,9 +57,9 @@ const VenueSection = ({ bgColor = 'white', language }: VenueSectionProps) => {
         subwayText: '',
         busText: '',
         localDetails:
-          'Wir empfehlen die Anreise mit dem Zug bis Figueres.\nEin Shuttle zur Location ist organisiert.\nDetails teilen wir rechtzeitig vor dem Event mit.',
+          'Wir empfehlen die Anreise mit dem Zug bis Figueres.\nWir holen euch am Bahnhof Figueres (Nahverkehr) oder Figueres-Vilafant (Fernverkehr) ab.\nDetails teilen wir rechtzeitig vor dem Event mit.',
         outsideDetails:
-          'Von dort empfehlen wir die Weiterreise mit dem Zug bis Figueres.\nAb Figueres steht ein Shuttle zur Location bereit.\nWeitere Informationen folgen näher am Eventdatum.',
+          'Von dort empfehlen wir die Weiterreise mit dem Zug bis Figueres.\nWir holen euch am Bahnhof Figueres (Nahverkehr) oder Figueres-Vilafant (Fernverkehr) ab.\nWeitere Informationen folgen näher am Eventdatum.',
         parkingText: 'Parkplätze sind direkt vor Ort verfügbar.',
       };
 
@@ -110,12 +102,6 @@ const VenueSection = ({ bgColor = 'white', language }: VenueSectionProps) => {
         />
       </MapWrapper>
       
-      <TransportCard>
-        <CardTitle>{t.arrival}</CardTitle>
-        <SubsectionTitle>{t.publicTransport}</SubsectionTitle>
-        <TransportText>{t.publicTransportText}</TransportText>
-      </TransportCard>
-
       <Card>
         <CardTitle>{t.localTitle}</CardTitle>
         <TransportText>{t.localDetails}</TransportText>
@@ -221,19 +207,12 @@ const Card = styled.div`
   text-align: left;
 `;
 
-const TransportCard = styled(Card)``;
 const ParkingCard = styled(Card)``;
 
 const CardTitle = styled.h4`
   font-weight: 500;
   margin-bottom: 1rem;
   font-size: 1rem;
-`;
-
-const SubsectionTitle = styled.h5`
-  font-weight: 500;
-  margin-bottom: 1rem;
-  font-size: 0.95rem;
 `;
 
 const TransportItem = styled.div`

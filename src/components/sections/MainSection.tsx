@@ -13,7 +13,7 @@ interface MainSectionProps {
 }
 
 const MainSection = ({ language }: MainSectionProps) => {
-  const title = language === 'es' ? 'Invitacion de Boda' : 'Hochzeitseinladung';
+  const title = language === 'es' ? 'Invitación de boda' : 'Hochzeitseinladung';
   const subtitleText = language === 'es' ? 'Vivian y Harold' : 'Vivian und Harold';
   const imageAlt = language === 'es' ? 'Imagen de fondo de boda' : 'Hochzeits-Hintergrundbild';
 

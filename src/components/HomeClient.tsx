@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
-import VenueSection from './sections/VenueSection';
 import MusicSection from './sections/MusicSection';
 import RsvpSection from './sections/RsvpSection';
 import AccountSection from './sections/AccountSection';
@@ -22,14 +21,20 @@ const DateSection = dynamic(() => import('./sections/DateSection'), {
   ssr: false,
 });
 
+const VenueSection = dynamic(() => import('./sections/VenueSection'), {
+  ssr: false,
+});
+
 const GallerySection = dynamic(() => import('./sections/GallerySection'), {
   ssr: false,
 });
 
 export default function HomeClient() {
   const [language, setLanguage] = useState<SiteLanguage>('en');
+  const [hasMounted, setHasMounted] = useState(false);
 
   useEffect(() => {
+    setHasMounted(true);
     const storedLanguage = window.localStorage.getItem(LANGUAGE_STORAGE_KEY);
     if (storedLanguage === 'es') {
       setLanguage('es');
@@ -79,6 +84,10 @@ export default function HomeClient() {
 
     return colorMap;
   }, [galleryPosition, showRsvp, showAccount]);
+
+  if (!hasMounted) {
+    return null;
+  }
 
   return (
     <main>

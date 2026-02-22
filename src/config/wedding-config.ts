@@ -77,17 +77,7 @@ export const weddingConfig = {
   gallery: {
     layout: 'grid' as GalleryLayout, // Choose "scroll" or "grid"
     position: 'bottom' as GalleryPosition, // Choose "middle" (current spot) or "bottom" (end)
-    images: [
-      '/images/gallery/image1.jpg',
-      '/images/gallery/image2.jpg',
-      '/images/gallery/image3.jpg',
-      '/images/gallery/image4.jpg',
-      '/images/gallery/image5.jpg',
-      '/images/gallery/image6.jpg',
-      '/images/gallery/image7.jpg',
-      '/images/gallery/image8.jpg',
-      '/images/gallery/image9.jpg',
-    ],
+    images: [],
   } as GalleryConfig,
 
   // Invitation message
