@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { type SiteLanguage } from '../../lib/i18n';
 
@@ -13,9 +13,9 @@ const MAIN_PLAYLIST_URL = 'https://open.spotify.com/playlist/6GhaJJGssNFuMNQnYz7
 
 const MusicSection = ({ bgColor = 'white', language }: MusicSectionProps) => {
   const [noSpotifyMessage, setNoSpotifyMessage] = useState('');
+  const [isSending, setIsSending] = useState(false);
   const [emailError, setEmailError] = useState('');
   const [emailSuccess, setEmailSuccess] = useState('');
-  const musicContactEmail = process.env.NEXT_PUBLIC_MUSIC_CONTACT_EMAIL || 'Strube.cano@gmail.com';
   const t = language === 'es'
     ? {
         title: 'Solicitudes de Musica',
@@ -24,11 +24,12 @@ const MusicSection = ({ bgColor = 'white', language }: MusicSectionProps) => {
         noSpotifyMessage: 'Mensaje para enviar por correo',
         noSpotifyPlaceholder: 'Escribe aqui tu sugerencia musical...',
         sendEmail: 'Enviar mensaje por correo',
+        sendingEmail: 'Enviando...',
         playlistLinksTitle: 'Listas de la fiesta',
         mainPlaylist: 'Wedding V&H 2026',
-        configureEmail: 'Configura NEXT_PUBLIC_MUSIC_CONTACT_EMAIL para habilitar este envio.',
         addEmailMessage: 'Escribe un mensaje para enviar por correo.',
-        emailSent: 'Mensaje preparado en tu correo. Revisa y envia para completar.',
+        emailSent: 'Mensaje enviado correctamente.',
+        emailFailed: 'No se pudo enviar el mensaje. Intentalo de nuevo.',
       }
     : {
         title: 'Musikwünsche',
@@ -37,39 +38,48 @@ const MusicSection = ({ bgColor = 'white', language }: MusicSectionProps) => {
         noSpotifyMessage: 'Nachricht per E-Mail senden',
         noSpotifyPlaceholder: 'Schreibe hier deinen Musikwunsch...',
         sendEmail: 'Per E-Mail senden',
+        sendingEmail: 'Wird gesendet...',
         playlistLinksTitle: 'Playlists fuer die Feier',
         mainPlaylist: 'Wedding V&H 2026',
-        configureEmail: 'Bitte NEXT_PUBLIC_MUSIC_CONTACT_EMAIL konfigurieren, um E-Mails zu senden.',
         addEmailMessage: 'Bitte schreibe eine Nachricht fuer die E-Mail.',
-        emailSent: 'Nachricht ist in deiner E-Mail-App vorbereitet. Bitte sende sie dort ab.',
+        emailSent: 'Nachricht wurde erfolgreich gesendet.',
+        emailFailed: 'Nachricht konnte nicht gesendet werden. Bitte versuche es erneut.',
       };
 
-  const emailHref = useMemo(() => {
-    if (!musicContactEmail || !noSpotifyMessage.trim()) {
-      return '';
-    }
-    const subject = language === 'es'
-      ? 'Sugerencia musical para la boda'
-      : 'Musikwunsch fuer die Hochzeit';
-    const body = noSpotifyMessage.trim();
-    return `mailto:${musicContactEmail.trim()}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  }, [musicContactEmail, noSpotifyMessage, language]);
-
-  const onSendEmail = () => {
+  const onSendEmail = async () => {
     setEmailError('');
     setEmailSuccess('');
-    if (!musicContactEmail) {
-      setEmailError(t.configureEmail);
-      return;
-    }
     if (!noSpotifyMessage.trim()) {
       setEmailError(t.addEmailMessage);
       return;
     }
-    setEmailSuccess(t.emailSent);
-    setTimeout(() => {
-      window.location.href = emailHref;
-    }, 150);
+    setIsSending(true);
+
+    try {
+      const response = await fetch('/api/music', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: noSpotifyMessage.trim(),
+          language,
+          timestamp: new Date().toISOString(),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('send-failed');
+      }
+
+      setEmailSuccess(t.emailSent);
+      setNoSpotifyMessage('');
+    } catch (error) {
+      console.error('Music email send error:', error);
+      setEmailError(t.emailFailed);
+    } finally {
+      setIsSending(false);
+    }
   };
 
   return (
@@ -97,14 +107,13 @@ const MusicSection = ({ bgColor = 'white', language }: MusicSectionProps) => {
 
           {emailError && <ErrorText>{emailError}</ErrorText>}
           {emailSuccess && <SuccessText>{emailSuccess}</SuccessText>}
-          {!musicContactEmail && <HelpText>{t.configureEmail}</HelpText>}
 
           <SubmitButton
             type="button"
             onClick={onSendEmail}
-            disabled={!musicContactEmail}
+            disabled={isSending || !noSpotifyMessage.trim()}
           >
-            {t.sendEmail}
+            {isSending ? t.sendingEmail : t.sendEmail}
           </SubmitButton>
         </Form>
       </FormCard>
@@ -214,12 +223,6 @@ const NoSpotifyTitle = styled.h3`
   margin: 0 0 1rem;
   font-size: 1rem;
   font-weight: 600;
-`;
-
-const HelpText = styled.p`
-  margin: 0;
-  font-size: 0.82rem;
-  color: var(--text-medium);
 `;
 
 const ErrorText = styled.p`
