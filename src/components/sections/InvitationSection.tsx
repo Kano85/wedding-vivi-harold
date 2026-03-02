@@ -12,13 +12,13 @@ interface InvitationSectionProps {
 const InvitationSection = ({ bgColor = 'white', language }: InvitationSectionProps) => {
   const message =
     language === 'es'
-      ? 'Todo empezó con un "sí".\n\nHoy empieza nuestra nueva etapa\ny queremos que estés en el primer capítulo.'
-      : 'Alles begann mit einem „Ja“.\n\nHeute beginnt unser neuer Lebensabschnitt\nund wir möchten, dass du Teil des ersten Kapitels bist.';
+      ? 'Nosotros ponemos el “sí”.\nTú pones el ambiente.\n\n¿Te apuntas?'
+      : 'Wir sagen „Ja“.\nDu sorgst für die Stimmung.\n\nBist du dabei?';
   const dressCodeTitle = language === 'es' ? 'Dresscode' : 'Dresscode';
   const dressCodeText =
     language === 'es'
-      ? 'Boda de tarde al aire libre.\nVen arreglado, fresco y cómodo.\nLa corbata es opcional.\n\nY, sobre todo, ven con ganas de disfrutar, vivir una tarde preciosa y llevarte una experiencia especial.'
-      : 'Abend-Hochzeit im Freien.\nKomm festlich gekleidet, aber locker und bequem.\nEine Krawatte ist optional.\n\nUnd vor allem: Komm mit Lust zu feiern, einen wunderschönen Nachmittag zu erleben und einen ganz besonderen Moment mit nach Hause zu nehmen.';
+      ? 'Boda de tarde al aire libre.\nVen arreglado, fresco y cómodo.\nLa corbata es opcional.\n\nY, sobre todo, ven con ganas de disfrutar, vivir un momento inolvidable y llevarte una experiencia especial.'
+      : 'Abend-Hochzeit im Freien.\nKomm festlich gekleidet, aber locker und bequem.\nEine Krawatte ist optional.\n\nUnd vor allem: Komm mit Lust zu feiern, eine unvergessliche Zeit zu erleben und einen ganz besonderen Moment mit nach Hause zu nehmen.';
 
   return (
     <InvitationSectionContainer $bgColor={bgColor}>

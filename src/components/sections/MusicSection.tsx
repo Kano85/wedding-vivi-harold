@@ -1,214 +1,113 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { formatShortDate, type SiteLanguage } from '../../lib/i18n';
-
-const STORAGE_KEY = 'wedding_music_requests_v1';
-
-type Submission = {
-  id: string;
-  name: string;
-  message: string;
-  spotifyUrl: string;
-  createdAt: string;
-};
-
-const isSpotifyUrl = (url: string) => {
-  try {
-    const parsed = new URL(url);
-    const isTrack = /\/track\//.test(parsed.pathname);
-    const isPlaylist = /\/playlist\//.test(parsed.pathname);
-    return parsed.hostname.endsWith('spotify.com') && (isTrack || isPlaylist);
-  } catch {
-    return false;
-  }
-};
-
-const toEmbedUrl = (url: string) => {
-  return url.replace('open.spotify.com/', 'open.spotify.com/embed/');
-};
-
-const loadStored = (): Submission[] => {
-  if (typeof window === 'undefined') return [];
-  const raw = window.localStorage.getItem(STORAGE_KEY);
-  if (!raw) return [];
-  try {
-    const parsed = JSON.parse(raw) as Submission[];
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-};
-
-const saveStored = (items: Submission[]) => {
-  if (typeof window === 'undefined') return;
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-};
+import { type SiteLanguage } from '../../lib/i18n';
 
 interface MusicSectionProps {
   bgColor?: 'white' | 'beige';
   language: SiteLanguage;
 }
 
+const MAIN_PLAYLIST_URL = 'https://open.spotify.com/playlist/6GhaJJGssNFuMNQnYz7p9N?si=QYGiFNqZQtiDeegBO3r3FA&pt=0e69056afa0572b5b14d2ca133d8009b&pi=Hwrctb9MRTSb4';
+
 const MusicSection = ({ bgColor = 'white', language }: MusicSectionProps) => {
-  const [name, setName] = useState('');
-  const [message, setMessage] = useState('');
-  const [spotifyUrl, setSpotifyUrl] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [items, setItems] = useState<Submission[]>([]);
+  const [noSpotifyMessage, setNoSpotifyMessage] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [emailSuccess, setEmailSuccess] = useState('');
+  const musicContactEmail = process.env.NEXT_PUBLIC_MUSIC_CONTACT_EMAIL || 'Strube.cano@gmail.com';
   const t = language === 'es'
     ? {
         title: 'Solicitudes de Musica',
-        intro: 'Comparte una cancion o playlist de Spotify para la celebracion. Revisaremos y agregaremos favoritas cerca de la fecha.',
-        name: 'Nombre',
-        yourName: 'Tu nombre',
-        message: 'Mensaje (opcional)',
-        whySong: 'Por que esta cancion?',
-        spotifyUrl: 'URL de Spotify',
-        password: 'Codigo',
-        passwordRequired: 'Codigo requerido',
-        submit: 'Enviar',
-        addName: 'Por favor agrega tu nombre.',
-        incorrectPassword: 'Codigo incorrecto.',
-        invalidSpotify: 'Agrega un enlace valido de Spotify (cancion o playlist).',
+        intro: 'Añade tus canciones favoritas a esta lista.',
+        noSpotifyTitle: 'No tengo Spotify',
+        noSpotifyMessage: 'Mensaje para enviar por correo',
+        noSpotifyPlaceholder: 'Escribe aqui tu sugerencia musical...',
+        sendEmail: 'Enviar mensaje por correo',
+        playlistLinksTitle: 'Listas de la fiesta',
+        mainPlaylist: 'Wedding V&H 2026',
+        configureEmail: 'Configura NEXT_PUBLIC_MUSIC_CONTACT_EMAIL para habilitar este envio.',
+        addEmailMessage: 'Escribe un mensaje para enviar por correo.',
+        emailSent: 'Mensaje preparado en tu correo. Revisa y envia para completar.',
       }
     : {
-        title: 'Musikwuensche',
-        intro: 'Teile einen Spotify-Song oder eine Playlist fuer die Feier. Wir pruefen alles und fuegen Favoriten naeher am Datum hinzu.',
-        name: 'Name',
-        yourName: 'Dein Name',
-        message: 'Nachricht (optional)',
-        whySong: 'Warum dieses Lied?',
-        spotifyUrl: 'Spotify URL',
-        password: 'Code',
-        passwordRequired: 'Code erforderlich',
-        submit: 'Senden',
-        addName: 'Bitte gib deinen Namen ein.',
-        incorrectPassword: 'Falscher Code.',
-        invalidSpotify: 'Bitte fuege einen gueltigen Spotify-Link (Song oder Playlist) ein.',
+        title: 'Musikwünsche',
+        intro: 'Füge deine Lieblingssongs in diese Liste hinzu.',
+        noSpotifyTitle: 'Kein Spotify?',
+        noSpotifyMessage: 'Nachricht per E-Mail senden',
+        noSpotifyPlaceholder: 'Schreibe hier deinen Musikwunsch...',
+        sendEmail: 'Per E-Mail senden',
+        playlistLinksTitle: 'Playlists fuer die Feier',
+        mainPlaylist: 'Wedding V&H 2026',
+        configureEmail: 'Bitte NEXT_PUBLIC_MUSIC_CONTACT_EMAIL konfigurieren, um E-Mails zu senden.',
+        addEmailMessage: 'Bitte schreibe eine Nachricht fuer die E-Mail.',
+        emailSent: 'Nachricht ist in deiner E-Mail-App vorbereitet. Bitte sende sie dort ab.',
       };
 
-  useEffect(() => {
-    setItems(loadStored());
-  }, []);
+  const emailHref = useMemo(() => {
+    if (!musicContactEmail || !noSpotifyMessage.trim()) {
+      return '';
+    }
+    const subject = language === 'es'
+      ? 'Sugerencia musical para la boda'
+      : 'Musikwunsch fuer die Hochzeit';
+    const body = noSpotifyMessage.trim();
+    return `mailto:${musicContactEmail.trim()}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  }, [musicContactEmail, noSpotifyMessage, language]);
 
-  const orderedItems = useMemo(() => {
-    return [...items].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-  }, [items]);
-
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-
-    if (!name.trim()) {
-      setError(t.addName);
+  const onSendEmail = () => {
+    setEmailError('');
+    setEmailSuccess('');
+    if (!musicContactEmail) {
+      setEmailError(t.configureEmail);
       return;
     }
-
-    const expectedPassword = process.env.NEXT_PUBLIC_MUSIC_SUBMIT_PASSWORD || '';
-    if (!expectedPassword || password.trim() !== expectedPassword) {
-      setError(t.incorrectPassword);
+    if (!noSpotifyMessage.trim()) {
+      setEmailError(t.addEmailMessage);
       return;
     }
-
-    if (!spotifyUrl.trim() || !isSpotifyUrl(spotifyUrl.trim())) {
-      setError(t.invalidSpotify);
-      return;
-    }
-
-    const next: Submission = {
-      id: crypto.randomUUID(),
-      name: name.trim(),
-      message: message.trim(),
-      spotifyUrl: spotifyUrl.trim(),
-      createdAt: new Date().toISOString(),
-    };
-
-    const updated = [next, ...items];
-    setItems(updated);
-    saveStored(updated);
-
-    setName('');
-    setMessage('');
-    setSpotifyUrl('');
-    setPassword('');
+    setEmailSuccess(t.emailSent);
+    setTimeout(() => {
+      window.location.href = emailHref;
+    }, 150);
   };
 
   return (
     <SectionContainer $bgColor={bgColor}>
       <SectionTitle>{t.title}</SectionTitle>
       <SectionIntro>{t.intro}</SectionIntro>
+      <PlaylistLinks aria-label={t.playlistLinksTitle}>
+        <PlaylistLink href={MAIN_PLAYLIST_URL} target="_blank" rel="noreferrer">
+          {t.mainPlaylist}
+        </PlaylistLink>
+      </PlaylistLinks>
 
       <FormCard>
-        <Form onSubmit={onSubmit}>
+        <NoSpotifyTitle>{t.noSpotifyTitle}</NoSpotifyTitle>
+        <Form>
           <Field>
-            <Label htmlFor="music-name">{t.name}</Label>
-            <Input
-              id="music-name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder={t.yourName}
+            <Label htmlFor="music-no-spotify-message">{t.noSpotifyMessage}</Label>
+            <TextArea
+              id="music-no-spotify-message"
+              value={noSpotifyMessage}
+              onChange={(e) => setNoSpotifyMessage(e.target.value)}
+              placeholder={t.noSpotifyPlaceholder}
             />
           </Field>
 
-          <Field>
-            <Label htmlFor="music-message">{t.message}</Label>
-            <Input
-              id="music-message"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder={t.whySong}
-            />
-          </Field>
+          {emailError && <ErrorText>{emailError}</ErrorText>}
+          {emailSuccess && <SuccessText>{emailSuccess}</SuccessText>}
+          {!musicContactEmail && <HelpText>{t.configureEmail}</HelpText>}
 
-          <Field>
-            <Label htmlFor="music-spotify">{t.spotifyUrl}</Label>
-            <Input
-              id="music-spotify"
-              value={spotifyUrl}
-              onChange={(e) => setSpotifyUrl(e.target.value)}
-              placeholder="https://open.spotify.com/track/..."
-            />
-          </Field>
-
-          <Field>
-            <Label htmlFor="music-password">{t.password}</Label>
-            <Input
-              id="music-password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder={t.passwordRequired}
-            />
-          </Field>
-
-          {error && <ErrorText>{error}</ErrorText>}
-
-          <SubmitButton type="submit">{t.submit}</SubmitButton>
+          <SubmitButton
+            type="button"
+            onClick={onSendEmail}
+            disabled={!musicContactEmail}
+          >
+            {t.sendEmail}
+          </SubmitButton>
         </Form>
       </FormCard>
-
-      {orderedItems.length > 0 && (
-        <List>
-          {orderedItems.map((item) => (
-            <ListItem key={item.id}>
-              <ListHeader>
-                <ListName>{item.name}</ListName>
-                <ListDate>{formatShortDate(language, item.createdAt)}</ListDate>
-              </ListHeader>
-              {item.message && <ListMessage>{item.message}</ListMessage>}
-              <Embed
-                src={toEmbedUrl(item.spotifyUrl)}
-                title={`${item.name} spotify request`}
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                loading="lazy"
-              />
-            </ListItem>
-          ))}
-        </List>
-      )}
     </SectionContainer>
   );
 };
@@ -245,6 +144,37 @@ const SectionIntro = styled.p`
   color: var(--text-medium);
 `;
 
+const PlaylistLinks = styled.div`
+  max-width: 36rem;
+  margin: 0 auto 1.5rem;
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+`;
+
+const PlaylistLink = styled.a`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.62rem 1.05rem;
+  border-radius: 999px;
+  background: #f97316;
+  border: 2px solid #ea580c;
+  color: white;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 700;
+  box-shadow: 0 8px 20px rgba(249, 115, 22, 0.35);
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+
+  &:hover {
+    background: #ef4444;
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px rgba(239, 68, 68, 0.4);
+  }
+`;
+
 const FormCard = styled.div`
   background-color: white;
   border-radius: 12px;
@@ -270,16 +200,36 @@ const Label = styled.label`
   font-weight: 500;
 `;
 
-const Input = styled.input`
+const TextArea = styled.textarea`
   border: 1px solid #e5e5e5;
   border-radius: 8px;
   padding: 0.75rem 0.9rem;
   font-size: 0.95rem;
   font-family: inherit;
+  min-height: 7rem;
+  resize: vertical;
+`;
+
+const NoSpotifyTitle = styled.h3`
+  margin: 0 0 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+`;
+
+const HelpText = styled.p`
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--text-medium);
 `;
 
 const ErrorText = styled.p`
   color: #b91c1c;
+  font-size: 0.85rem;
+  margin: 0;
+`;
+
+const SuccessText = styled.p`
+  color: #166534;
   font-size: 0.85rem;
   margin: 0;
 `;
@@ -297,52 +247,11 @@ const SubmitButton = styled.button`
   &:hover {
     background-color: #c4a986;
   }
-`;
 
-const List = styled.div`
-  display: grid;
-  gap: 1.5rem;
-  max-width: 36rem;
-  margin: 0 auto;
-`;
-
-const ListItem = styled.div`
-  background: white;
-  border-radius: 12px;
-  padding: 1rem;
-  text-align: left;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-`;
-
-const ListHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.5rem;
-`;
-
-const ListName = styled.p`
-  font-weight: 500;
-  margin: 0;
-`;
-
-const ListDate = styled.p`
-  margin: 0;
-  color: var(--text-medium);
-  font-size: 0.8rem;
-`;
-
-const ListMessage = styled.p`
-  margin: 0 0 0.75rem;
-  color: var(--text-medium);
-  font-size: 0.9rem;
-`;
-
-const Embed = styled.iframe`
-  width: 100%;
-  height: 152px;
-  border: none;
-  border-radius: 12px;
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 `;
 
 export default MusicSection;

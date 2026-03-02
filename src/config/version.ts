@@ -1,9 +1,9 @@
 // 이 파일은 빌드 시마다 자동으로 업데이트됩니다
-// Build Time: 2026-02-22T20:03:46.864Z
+// Build Time: 2026-03-02T21:35:45.261Z
 export const APP_VERSION = {
-  version: '1771790626864',
-  buildTime: '2026-02-22T20:03:46.864Z',
-  hash: 'iv8wndoo7w'
+  version: '1772487345261',
+  buildTime: '2026-03-02T21:35:45.261Z',
+  hash: 'nrfzymchxun'
 };
 
 export default APP_VERSION;
