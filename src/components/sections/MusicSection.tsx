@@ -9,7 +9,7 @@ interface MusicSectionProps {
   language: SiteLanguage;
 }
 
-const MAIN_PLAYLIST_URL = 'https://open.spotify.com/playlist/6GhaJJGssNFuMNQnYz7p9N?si=QYGiFNqZQtiDeegBO3r3FA&pt=0e69056afa0572b5b14d2ca133d8009b&pi=Hwrctb9MRTSb4';
+const MAIN_PLAYLIST_URL = 'https://open.spotify.com/playlist/6GhaJJGssNFuMNQnYz7p9N';
 
 const MusicSection = ({ bgColor = 'white', language }: MusicSectionProps) => {
   const [noSpotifyMessage, setNoSpotifyMessage] = useState('');
