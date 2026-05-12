@@ -25,14 +25,11 @@ export function formatWeddingDate(
   const monthNames = language === 'es'
     ? ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
     : ['Januar', 'Februar', 'Maerz', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
-  const paddedHour = String(dateParts.hour).padStart(2, '0');
-  const paddedMinute = String(dateParts.minute).padStart(2, '0');
-
   if (language === 'es') {
-    return `${weekdayNames[weekdayIndex]}, ${dateParts.day} de ${monthNames[monthIndex]} de ${dateParts.year} ${paddedHour}:${paddedMinute}`;
+    return `${weekdayNames[weekdayIndex]}, ${dateParts.day} de ${monthNames[monthIndex]} de ${dateParts.year}`;
   }
 
-  return `${weekdayNames[weekdayIndex]}, ${dateParts.day}. ${monthNames[monthIndex]} ${dateParts.year} ${paddedHour}:${paddedMinute}`;
+  return `${weekdayNames[weekdayIndex]}, ${dateParts.day}. ${monthNames[monthIndex]} ${dateParts.year}`;
 }
 
 export function formatShortDate(language: SiteLanguage, isoDate: string): string {

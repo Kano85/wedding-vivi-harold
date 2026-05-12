@@ -19,6 +19,16 @@ const InvitationSection = ({ bgColor = 'white', language }: InvitationSectionPro
     language === 'es'
       ? 'Boda de tarde al aire libre.\nVen arreglado, fresco y cómodo.\nLa corbata es opcional.\n\nY, sobre todo, ven con ganas de disfrutar, vivir un momento inolvidable y llevarte una experiencia especial.'
       : 'Abend-Hochzeit im Freien.\nKomm festlich gekleidet, aber locker und bequem.\nEine Krawatte ist optional.\n\nUnd vor allem: Komm mit Lust zu feiern, eine unvergessliche Zeit zu erleben und einen ganz besonderen Moment mit nach Hause zu nehmen.';
+  const menuTitle = language === 'es' ? 'Menú' : 'Menü';
+  const menuText =
+    language === 'es'
+      ? 'Cena cóctel: show cookings, buffets y pase de bandejas.'
+      : 'Cocktail-Dinner: Show-Cooking, Buffets und gereichte Häppchen.';
+  const ceremonyTitle = language === 'es' ? 'Ceremonia' : 'Trauung';
+  const ceremonyText =
+    language === 'es'
+      ? 'Si te apetece decir unas palabras durante la ceremonia, por favor contacta con Marc: +34 620 78 84 04.'
+      : 'Wenn du während der Trauung ein paar Worte sagen möchtest, kontaktiere bitte Marc: +34 620 78 84 04.';
 
   return (
     <InvitationSectionContainer $bgColor={bgColor}>
@@ -26,6 +36,12 @@ const InvitationSection = ({ bgColor = 'white', language }: InvitationSectionPro
       <Separator />
       <SectionTitle>{dressCodeTitle}</SectionTitle>
       <InvitationMessage>{dressCodeText}</InvitationMessage>
+      <Separator />
+      <SectionTitle>{menuTitle}</SectionTitle>
+      <InvitationMessage>{menuText}</InvitationMessage>
+      <Separator />
+      <SectionTitle>{ceremonyTitle}</SectionTitle>
+      <InvitationMessage>{ceremonyText}</InvitationMessage>
     </InvitationSectionContainer>
   );
 };

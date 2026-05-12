@@ -11,27 +11,6 @@ type Props = {
   mapId?: string;
 };
 
-function isAbortError(error: unknown): boolean {
-  if (error instanceof DOMException) return error.name === 'AbortError';
-  if (error instanceof Error) {
-    return (
-      error.name === 'AbortError' ||
-      error.message.toLowerCase().includes('signal is aborted without reason')
-    );
-  }
-
-  if (typeof error === 'object' && error !== null) {
-    const maybeError = error as { name?: unknown; message?: unknown };
-    return (
-      maybeError.name === 'AbortError' ||
-      (typeof maybeError.message === 'string' &&
-        maybeError.message.toLowerCase().includes('signal is aborted without reason'))
-    );
-  }
-
-  return false;
-}
-
 export default function MapTilerLightMap({
   lng,
   lat,
@@ -71,34 +50,6 @@ export default function MapTilerLightMap({
       .addTo(map);
 
     mapRef.current = map;
-
-    return () => {
-      const currentMap = mapRef.current;
-      if (!currentMap) return;
-
-      const swallowAbortRejection = (event: PromiseRejectionEvent) => {
-        if (isAbortError(event.reason)) {
-          event.preventDefault();
-        }
-      };
-
-      window.addEventListener('unhandledrejection', swallowAbortRejection);
-
-      try {
-        currentMap.remove();
-      } catch (error) {
-        // Map teardown can abort in-flight style/source requests; ignore only this known case.
-        if (!isAbortError(error)) {
-          throw error;
-        }
-      } finally {
-        mapRef.current = null;
-        // Keep the guard through the next macrotask so teardown rejections are captured.
-        window.setTimeout(() => {
-          window.removeEventListener('unhandledrejection', swallowAbortRejection);
-        }, 0);
-      }
-    };
   }, [lng, lat, zoom, popupHtml, mapId]);
 
   return (

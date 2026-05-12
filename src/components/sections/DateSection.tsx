@@ -31,6 +31,10 @@ const DateSection = ({ bgColor = 'white', language }: DateSectionProps) => {
     language === 'es'
       ? 'Si llegas el sábado, puedes venir durante el día.\nPodéis llegar cuando queráis y disfrutar del entorno con calma antes de que empiece la celebración.'
       : 'Für alle, die bereits am Samstag anreisen: Ihr könnt tagsüber jederzeit kommen und die Umgebung in Ruhe genießen, bevor die Feier beginnt.';
+  const scheduleInfo =
+    language === 'es'
+      ? 'Bienvenida — 17:30\nCeremonia — 18:00'
+      : 'Willkommen — 17:30\nTrauung — 18:00';
   const countdownTitle = language === 'es' ? 'Tiempo para la boda' : 'Zeit bis zur Hochzeit';
   const countdownLabels = language === 'es'
     ? { days: 'Dias', hours: 'Horas', minutes: 'Minutos', seconds: 'Segundos' }
@@ -120,6 +124,7 @@ const DateSection = ({ bgColor = 'white', language }: DateSectionProps) => {
     <DateSectionContainer $bgColor={bgColor}>
       <SectionTitle>{sectionTitle}</SectionTitle>
       <HeaderDate>{formatWeddingDate(language, weddingConfig.date)}</HeaderDate>
+      <ScheduleInfo>{scheduleInfo}</ScheduleInfo>
       <ArrivalInfo>{arrivalInfo}</ArrivalInfo>
 
       <CalendarCard>
@@ -386,7 +391,15 @@ const VerticalDivider = styled.div`
 
 const HeaderDate = styled.p`
   font-size: 1.15rem;
-  margin: -0.5rem 0 0.8rem 0;
+  margin: -0.5rem 0 1rem 0;
+`;
+
+const ScheduleInfo = styled.p`
+  white-space: pre-line;
+  line-height: 1.7;
+  margin: 0 auto 1.25rem auto;
+  font-size: 1rem;
+  font-weight: 500;
 `;
 
 const ArrivalInfo = styled.p`

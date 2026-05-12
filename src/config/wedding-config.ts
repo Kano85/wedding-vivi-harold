@@ -40,8 +40,8 @@ export const weddingConfig = {
     month: 6,
     day: 6,
     hour: 17,
-    minute: 0,
-    displayDate: '2026.06.06 SAT 17:00',
+    minute: 30,
+    displayDate: '2026.06.06 SAT 17:30',
   },
 
   // Venue info
